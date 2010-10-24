@@ -1,0 +1,43 @@
+
+Development priorities / proportions:
+1- Gameplay         (40%)
+2- Simulation       (35%)
+3- Graphics & Sound (25%)
+
+
+----------
+
+* Nearly endless world
+* Caves / dungeons (natural and structured?)
+* 8-direction orienting
+
+
+----------
+= 5 data types = (Rules for interacting with self and the 4 others)
+  Player
+  Enemy
+  Effects
+  Pickups
+  Terrain
+  Features
+
+
+----------
+
+Terrain
+  Earth layer
+  Water layer
+  Vegetation layer
+  Road/path layer
+  Structure layer
+  Weather layer
+------
+  Hydraulic Erosion
+  Thermal Weathering Erosion
+  Plant & animal Erosion
+------
+
+-----------
+
+Personality choices / Good/Bad defined by a code of conduct
+  Affects how they are trusted by certain creatures / powers
