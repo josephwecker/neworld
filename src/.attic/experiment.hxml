@@ -1,0 +1,6 @@
+-cp src/
+-cp lib/
+-main Experiment
+-swf build/experiment.swf
+-swf-version 9
+-swf-header 100:100:120:112200

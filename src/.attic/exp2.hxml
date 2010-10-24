@@ -1,0 +1,7 @@
+-cp src/
+-cp lib/
+-resource lib/stok3d-read-only/pbj/.pbj@phong
+-main Exp2
+-swf9 build/exp2.swf
+-swf-version 10
+-swf-header 900:600:120:000000

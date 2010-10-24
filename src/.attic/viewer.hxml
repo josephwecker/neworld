@@ -1,0 +1,7 @@
+-cp src/
+-cp lib/
+-lib sandy
+-main Viewer
+-swf9 build/viewer.swf
+-swf-version 10
+-swf-header 900:600:20:FFFFFF
