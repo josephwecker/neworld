@@ -1,3 +1,12 @@
+
+Scrolling
+http://github.com/Glidias/BitmapScroller  (uses alchemy mem)
+
+
+Line-of-site shadows
+http://hesselboom.com/2010/02/experimenting-with-simulation-of-hard-edged-shadows/
+
+
 Misc:
 
 - Occlusion based on character location
