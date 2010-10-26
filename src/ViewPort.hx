@@ -1,79 +1,53 @@
-/* Given a player and a map- this renders the actual view
- *
- * ViewPort scroll-type
- * ViewPort bounding box boundaries
- *
- * Player map location (map column, z, tile-offsets)
- * [Player orientation]
- * [Player viewable tiles]
- * 
- * 
- * 
- * 
+import flash.display.BitmapData;
+import flash.display.Bitmap;
+import Utils;
+
+/* Extends sprite for all the events etc., but never actually displays anything
+ * directly- only has main_bitmap display to the screen.
  */
+class ViewPort extends flash.display.Sprite {
+    var view_data : BitmapData;
+    var main_bitmap : Bitmap;
 
-import Player;
+    public function new() {
+        super();
 
+        flash.Lib.current.addChild(this);
+        flash.Lib.current.cacheAsBitmap =   true;
+        stage.scaleMode =                   flash.display.StageScaleMode.NO_SCALE;
+        stage.align =                       flash.display.StageAlign.TOP_LEFT;
+        flash.Lib.current.contextMenu =     null;
+        flash.Lib.current.mouseEnabled =    false;
 
-class ViewPort {
-    var view : flash.display.Sprite;
+        addEventListener(flash.events.Event.ENTER_FRAME, draw_current_state);
+        stage.addEventListener(flash.events.Event.RESIZE, calculate_boundaries);
+        stage.addEventListener(flash.events.KeyboardEvent.KEY_DOWN, maybe_fullscreen);
 
-    var width : Float;
-    var height : Float;
-
-    var map : Map;
-
-
-    public function new(main_view) {
-        view = main_view;
-        view.addEventListener(flash.events.Event.ENTER_FRAME, draw_current_state);
-        view.stage.addEventListener(flash.events.Event.RESIZE, calculate_boundaries);
-        view.stage.addEventListener(flash.events.KeyboardEvent.KEY_DOWN, maybe_fullscreen);
-        calculate_boundaries(null);
+        view_data = new BitmapData(stage.stageWidth, stage.stageHeight, true, 0);
+        main_bitmap = new Bitmap(view_data);
+        flash.Lib.current.addChild(main_bitmap);
     }
 
     function calculate_boundaries(_) {
-        width = view.stage.stageWidth;
-        height = view.stage.stageHeight;
+        main_bitmap.width = stage.stageWidth;
+        main_bitmap.height = stage.stageHeight;
+        view_data = new BitmapData(stage.stageWidth, stage.stageHeight, true, 0);
+        main_bitmap.bitmapData = view_data;
     }
 
     function maybe_fullscreen(e : flash.events.KeyboardEvent) {
         if(e.keyCode == 70) {
             trace("Toggling fullscreen");
-            if(view.stage.displayState == flash.display.StageDisplayState.NORMAL)
-                view.stage.displayState = flash.display.StageDisplayState.FULL_SCREEN;
-            else view.stage.displayState = flash.display.StageDisplayState.NORMAL;
+            if(stage.displayState == flash.display.StageDisplayState.NORMAL)
+                stage.displayState = flash.display.StageDisplayState.FULL_SCREEN;
+            else stage.displayState = flash.display.StageDisplayState.NORMAL;
         }
     }
 
     function draw_current_state(_) {
-        view.graphics.clear();
+        view_data.lock();
+        view_data.noise(U.randInt());
+        view_data.unlock();
     }
 }
-
-class ColumnTile {
-    public var x_advance : Int;
-    public var y_advance : Int;
-    public var x_offset  : Int;
-    public function new() {}
-}
-
-class Dimetric extends ColumnTile {
-    public function new() {
-        super();
-        x_advance = 24;
-        y_advance = 12;
-        x_offset  = 3;
-    }
-}
-
-class Isometric extends ColumnTile {
-    public function new() {
-        super();
-        x_advance = 34;
-        y_advance = 17;
-        x_offset  = 17;
-    }
-}
-
 

@@ -16,4 +16,7 @@ class U {
         return Math.floor(Math.random() * max);
     }
 
+    public static function randInt() : UInt {
+        return U.rand(0xFFFFF);
+    }
 }
