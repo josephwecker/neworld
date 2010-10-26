@@ -1,0 +1,5 @@
+-cp ./src
+-main Test
+-swf ./bin/test.swf
+-swf-version 10
+-swf-header 550:400:30:FFFFFF
