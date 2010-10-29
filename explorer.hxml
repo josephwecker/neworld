@@ -1,7 +1,9 @@
 -cp src/
 -cp lib/
 -main Explorer
+-lib polygonal
 -swf9 build/explorer.swf
 -swf-version 10
 -swf-header 640:480:100:000000
 -debug
+--flash-strict

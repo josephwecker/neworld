@@ -1,17 +1,30 @@
+package ;
+
+import de.polygonal.core.event.IObserver;
+import de.polygonal.core.event.Observable;
+import de.polygonal.core.time.Timebase;
+import de.polygonal.core.time.TimebaseEvent;
 import flash.display.BitmapData;
 import flash.display.Bitmap;
 import Utils;
 
 /* Extends sprite for all the events etc., but never actually displays anything
  * directly- only has main_bitmap display to the screen.
+ *
+ * Disables context menu as much as possible and, handles resize events, and
+ * handles the rendering loop.
  */
-class ViewPort extends flash.display.Sprite {
+class ViewPort extends flash.display.Sprite,
+               implements IObserver {
     var portal_width(get_portal_width, null) : Int;
     var portal_height(get_portal_height, null) : Int;
     var view_data : BitmapData;
     var main_bitmap : Bitmap;
+    var copy_point : flash.geom.Point;
 
-    public function new() {
+    var projection : Projection;
+
+    public function new(player, map) {
         super();
 
         flash.Lib.current.addChild(this);
@@ -26,10 +39,22 @@ class ViewPort extends flash.display.Sprite {
         main_bitmap = new Bitmap(null, flash.display.PixelSnapping.ALWAYS, false);
         calculate_boundaries(null);
         flash.Lib.current.addChild(main_bitmap);
+        projection = new Projection(player, map);
+        copy_point = new flash.geom.Point(0,0);
 
-        addEventListener(flash.events.Event.ENTER_FRAME, draw_current_state);
+        Timebase.attach(this, TimebaseEvent.RENDER);
         stage.addEventListener(flash.events.Event.RESIZE, calculate_boundaries);
         stage.addEventListener(flash.events.KeyboardEvent.KEY_DOWN, maybe_fullscreen);
+    }
+
+    public function update(type : Int, source : Observable, data : Dynamic) {
+        trace("Update Render: " + type + " | " + source + " | " + data);
+        view_data.lock();
+        view_data.noise(U.randInt());
+        //projection.render(view_data, portal_width, portal_height);
+        //var rendered = projection.render(portal_width, portal_height);
+        //view_data.copyPixels(rendered, rendered.rect, copy_point);
+        view_data.unlock();
     }
 
     inline function get_portal_width() : Int { return stage.stageWidth;}
@@ -54,11 +79,30 @@ class ViewPort extends flash.display.Sprite {
             }
         } catch(_:Dynamic) {}
     }
-
-    function draw_current_state(_) {
-        view_data.lock();
-        view_data.noise(U.randInt());
-        view_data.unlock();
-    }
 }
 
+
+/* Renders the scene and copies pixels into the bitmap that they want.  Should
+ * eventually handle scrolling etc. as well.
+ */
+
+class Projection {
+    var player : Player;
+    var map    : Map;
+    var current_data : BitmapData;
+    public function new(player, map) {
+        this.player = player;
+        this.map = map;
+        current_data = new BitmapData(640, 480, true, 0);
+    }
+
+    /*public function render(width, height) : BitmapData {
+        if(width != current_data.width || height != current_data.height) {
+            current_data = new BitmapData(width, height, true, 0);
+        }
+    }*/
+
+    public function render(data, width, height) {
+
+    }
+}

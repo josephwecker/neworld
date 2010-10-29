@@ -16,7 +16,7 @@ class Explorer {
 
         map =      new Map();
         player =   new Player();
-        viewport = new ViewPort();
+        viewport = new ViewPort(player, map);
         // Put player on map
         // Connect player and map to viewport
     }
