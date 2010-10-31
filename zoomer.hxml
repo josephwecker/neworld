@@ -1,0 +1,9 @@
+-cp src/
+-cp lib/
+-main Zoomer
+-lib polygonal
+-swf9 build/zoomer.swf
+-swf-version 10
+-swf-header 400:200:1:000000
+-debug
+--flash-strict
