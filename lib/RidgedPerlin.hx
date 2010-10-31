@@ -82,8 +82,8 @@ class RidgedPerlin {
   
   var minColor: Float;
   var maxColor: Float;
-  
-  
+
+
   public function new( ?seed, ?octaves, ?falloff ) {
     if( seed == null ) seed = 123;
     if( falloff == null ) falloff = .4;
@@ -119,7 +119,9 @@ class RidgedPerlin {
 			
 	minColor = 255;
 	maxColor = 0;
-	
+
+    trace("baseX="+baseX+" | iXoffset="+iXoffset);
+
     for ( py in 0...height )
     {
       _x = baseX;
@@ -147,6 +149,9 @@ class RidgedPerlin {
 			var X = Std.int(xf) & 255;
 			var Y = Std.int(yf) & 255;
 			var Z = Std.int(zf) & 255;
+
+            if(i == 0 && px == 0 && py == 0) trace("_x="+_x+" | fFreq="+fFreq +
+                " | x="+x +" | xf="+xf+" | X="+X);
 
 			x -= xf;
 			y -= yf;
@@ -201,12 +206,15 @@ class RidgedPerlin {
 
 			var noise = ( g8 + w * (g4 - g8))*fPers;
 		
-			// Make the ridges.
-			noise = Math.abs( noise );
-			noise = _offset - noise;
-			
-			// Square the signal to increase the sharpness of the ridges.
-			noise = noise * noise;
+            // More continental if first octave isn't ridgy
+            if(i > 0) {
+                // Make the ridges.
+                noise = Math.abs( noise );
+                noise = _offset - noise;
+                
+                // Square the signal to increase the sharpness of the ridges.
+                noise = noise * noise;
+            }
 			
 			// The weighting from the previous octave is applied to the signal.
 			// Larger values have higher weights, producing sharp points along the
@@ -230,7 +238,12 @@ class RidgedPerlin {
 			else if ( color <= 0 ) color = 0;
 		}
 		
-        bitmap.setPixel( px, py, color << 16 );
+        if(color < 32) bitmap.setPixel( px, py, 128);
+        else if(color > (256 - 32)) bitmap.setPixel( px, py, ((color-32) << 16)
+            + ((color-32) << 8) + (color-32) );
+        else {
+            bitmap.setPixel(px, py, (color << 16));
+        }
 
         _x += _baseFactor;
       }
