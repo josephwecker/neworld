@@ -9,7 +9,7 @@ import de.polygonal.core.event.Observable;
 import de.polygonal.core.time.Timebase;
 import de.polygonal.core.time.TimebaseEvent;
 
-class Zoomer extends flash.display.Sprite { //, implements IObserver {
+class Zoomer extends flash.display.Sprite, implements IObserver {
     var mainbmpdat : BitmapData;
     var mainbmp : Bitmap;
     var rp : RidgedPerlin;
@@ -29,42 +29,40 @@ class Zoomer extends flash.display.Sprite { //, implements IObserver {
 
     public function new() {
         super();
-        //flash.Lib.current.addChild(this);
-        //flash.Lib.current.cacheAsBitmap =   true;
+        flash.Lib.current.cacheAsBitmap =   true;
         //flash.Lib.current.stage.scaleMode =                   flash.display.StageScaleMode.NO_SCALE;
         //flash.Lib.current.stage.align =                       flash.display.StageAlign.TOP_LEFT;
-        //flash.Lib.current.stage.showDefaultContextMenu=       false;
-        //flash.Lib.current.contextMenu =     new flash.ui.ContextMenu();
-        //flash.Lib.current.contextMenu.hideBuiltInItems();
-        //flash.Lib.current.mouseEnabled =    false;
+        flash.Lib.current.stage.showDefaultContextMenu=       false;
+        flash.Lib.current.contextMenu =     new flash.ui.ContextMenu();
+        flash.Lib.current.contextMenu.hideBuiltInItems();
+        flash.Lib.current.mouseEnabled =    false;
 
-        base = 0.008;
-        gain = 1.25;
-        offset = 0.7;
-        octaves = 7;
+        base =        0.008; // Keep as power of 2!
+        gain =        1.25;
+        offset =      0.7;
+        //octaves =     7;
+        octaves =     5;
         persistence = 0.9;
 
-        mainbmpdat = new BitmapData(400,200,false,0);
-        //scaler =     0xfffeffff;
-        scaler = 1;
+        mainbmpdat = new BitmapData(100,100,false,0);
+        scaler =     1;
         rp =         new RidgedPerlin(Math.ceil(Math.random() * 100), octaves, persistence);
         mainbmp =    new Bitmap(mainbmpdat, flash.display.PixelSnapping.ALWAYS, false);
 
-        do_update(null);
+        //update(null);
         flash.Lib.current.addChild(mainbmp);
-        flash.Lib.current.stage.addEventListener(flash.events.KeyboardEvent.KEY_DOWN, do_update);
-        //Timebase.attach(this, TimebaseEvent.RENDER);
+        //flash.Lib.current.stage.addEventListener(flash.events.KeyboardEvent.KEY_DOWN, do_update);
+        Timebase.attach(this, TimebaseEvent.RENDER);
     }
 
-    //public function update(type : Int, source : Observable, data : Dynamic) {
-    public function do_update(_) {
+    public function update(type : Int, source : Observable, data : Dynamic) {
+   // public function do_update(_) {
         mainbmpdat.lock();
         var real_base = base * (1 / scaler);
-        rp.fill(mainbmpdat, ((scaler+1) * (400 / 2)), ((scaler+1) * (200/2)), 0, real_base, gain, offset, true);
+        rp.fill(mainbmpdat, 0, 0, 0, real_base, gain, offset, true);
         mainbmpdat.unlock();
         //var incby = 128 / base;   // SHOWS INFINITE LANDSCAPE
         //scaler += incby;
-        scaler += 1;
-        trace(scaler);
+        scaler += 0.1;
     }
 }
