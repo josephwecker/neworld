@@ -50,10 +50,8 @@ class ViewPort extends flash.display.Sprite,
     public function update(type : Int, source : Observable, data : Dynamic) {
         trace("Update Render: " + type + " | " + source + " | " + data);
         view_data.lock();
-        view_data.noise(U.randInt());
-        //projection.render(view_data, portal_width, portal_height);
-        //var rendered = projection.render(portal_width, portal_height);
-        //view_data.copyPixels(rendered, rendered.rect, copy_point);
+        // DEBUG view_data.noise(U.randInt());
+        projection.render(view_data, portal_width, portal_height);
         view_data.unlock();
     }
 
@@ -84,23 +82,21 @@ class ViewPort extends flash.display.Sprite,
 
 /* Renders the scene and copies pixels into the bitmap that they want.  Should
  * eventually handle scrolling etc. as well.
+ *
+ * TODO:
+ *  - objectstore for blit objects
+ *  - objectstore for tiles
  */
 
 class Projection {
     var player : Player;
     var map    : Map;
-    var current_data : BitmapData;
+    //var current_data : BitmapData;
     public function new(player, map) {
         this.player = player;
         this.map = map;
-        current_data = new BitmapData(640, 480, true, 0);
+        //current_data = new BitmapData(640, 480, true, 0);
     }
-
-    /*public function render(width, height) : BitmapData {
-        if(width != current_data.width || height != current_data.height) {
-            current_data = new BitmapData(width, height, true, 0);
-        }
-    }*/
 
     public function render(data, width, height) {
 
