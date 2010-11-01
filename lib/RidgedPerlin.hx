@@ -238,7 +238,7 @@ class RidgedPerlin {
 			else if ( color <= 0 ) color = 0;
 		}
 		
-        if(color < 32) bitmap.setPixel( px, py, 128);
+        if(color < 32) bitmap.setPixel( px, py, color * 3 + 32);
         else if(color > (256 - 32)) bitmap.setPixel( px, py, ((color-32) << 16)
             + ((color-32) << 8) + (color-32) );
         else {
