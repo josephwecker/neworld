@@ -1,1 +1,3 @@
-haxelib install polygonal
+# requires very latest haxe
+haxelib install polygonal  # requires very latest svn version
+haxelib install format     # If I do the shader stuff at any point...
