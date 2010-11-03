@@ -13,6 +13,11 @@ def experiments():
     haxe('experiments.TestSimplex')
     haxe('experiments.Zoomer',            libs=['polygonal'])
     haxe('experiments.explorer.Explorer', libs=['polygonal'])
-    #haxe('STest')
+    haxe('experiments.Experiment')
+    haxe('experiments.Exp2')
+    haxe('experiments.Exp3')
+    haxe('experiments.Game')
+    haxe('experiments.game2.Game2')
+    haxe('experiments.game2.Viewer',      libs=['sandy'])
 
 main()
