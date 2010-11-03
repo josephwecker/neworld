@@ -13,11 +13,11 @@ import os, sys
 from fabricate import *
 
 # Pop this stuff off of argv
-DEBUG = False
+DEBUG = True
 for command in sys.argv:
-    if command == '-debug':
-        DEBUG = True
-        sys.argv.remove('-debug')
+    if command == '-production':
+        DEBUG = False
+        sys.argv.remove('-production')
 
 def flatten(l, ltypes=(list, tuple)):
     ltype = type(l)
@@ -37,6 +37,8 @@ def flatten(l, ltypes=(list, tuple)):
 sources = ['./', 'src', 'lib']
 setup(dirs=flatten([sources,'swfs/']), runner='smart_runner',
         hasher=mtime_hasher)
+
+#------------------------------------------------------
 
 def p(*args):
     '''Shorthand for joining path segments together into one path'''
@@ -63,8 +65,9 @@ def haxe(name):
             '-swf-version', 10,
             '-debug' if DEBUG else None]
     run(cmd)
-    #   print flatten(cmd)
 
+
+#------------------------------------------------------
 # Make sure we're in the right working directory to begin with (possibly not
 # needed and possibly even interferes w/ fabricate later, we'll see)
 os.chdir(ROOT_DIR)
