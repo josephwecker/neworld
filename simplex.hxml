@@ -1,8 +1,0 @@
--cp lib
--cp src
--swf9 s.swf
--main STest
--swf-version 10
--swf-header 500:500:100:000000
---flash-strict
--debug

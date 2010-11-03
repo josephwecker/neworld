@@ -9,7 +9,10 @@ def clean():
     rmdir('swfs')
 
 def experiments():
-    haxe('experiments.shader.TestShader', libs=['format'])
-    haxe('STest')
+    haxe('experiments.TestShader',        libs=['format'])
+    haxe('experiments.TestSimplex')
+    haxe('experiments.Zoomer',            libs=['polygonal'])
+    haxe('experiments.explorer.Explorer', libs=['polygonal'])
+    #haxe('STest')
 
 main()

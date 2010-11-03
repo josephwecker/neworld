@@ -63,6 +63,7 @@ def haxe(name, libs=[], resources=None):
             [['-cp',s] for s in sources],
             '-swf9', 'swfs/'+ name.lower() + '.swf',
             '-swf-version', 10,
+            '--flash-strict',
             '-debug' if DEBUG else None,
             [['-lib',l] for l in libs]]
     run(cmd)
