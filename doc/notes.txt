@@ -41,3 +41,10 @@ Terrain
 
 Personality choices / Good/Bad defined by a code of conduct
   Affects how they are trusted by certain creatures / powers
+
+-------------
+
+
+
+
+

@@ -37,7 +37,7 @@ class Zoomer extends flash.display.Sprite { //, implements IObserver {
         flash.Lib.current.contextMenu.hideBuiltInItems();
         flash.Lib.current.mouseEnabled =    false;
 
-        base =        0.0008; // Keep as power of 2!
+        base =        0.00016; // Keep as power of 2!
         gain =        1.25;
         offset =      0.7;
         octaves =     7;

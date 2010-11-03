@@ -91,11 +91,9 @@ class ViewPort extends flash.display.Sprite,
 class Projection {
     var player : Player;
     var map    : Map;
-    //var current_data : BitmapData;
     public function new(player, map) {
         this.player = player;
         this.map = map;
-        //current_data = new BitmapData(640, 480, true, 0);
     }
 
     public function render(data, width, height) {
