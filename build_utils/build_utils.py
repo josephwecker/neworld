@@ -57,13 +57,14 @@ def mkdir(*path):
 def rmdir(*path):
     run('rm', '-rf', p(*path))
 
-def haxe(name):
+def haxe(name, libs=[], resources=None):
     cmd = ['haxe',
             '-main', name,
             [['-cp',s] for s in sources],
             '-swf9', 'swfs/'+ name.lower() + '.swf',
             '-swf-version', 10,
-            '-debug' if DEBUG else None]
+            '-debug' if DEBUG else None,
+            [['-lib',l] for l in libs]]
     run(cmd)
 
 

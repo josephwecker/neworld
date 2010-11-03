@@ -3,18 +3,13 @@ from build_utils import *
 
 def build():
     mkdir('swfs')
-    #neworld()
-    #explorer()
-    #zoomer()
-    simplex()
+    experiments()
 
 def clean():
     rmdir('swfs')
-    pass
 
-
-def simplex():
+def experiments():
+    haxe('TestShader', libs=['format'])
     haxe('STest')
-    pass
 
 main()
