@@ -28,12 +28,12 @@ class SampleMap {
         rp.fill(bmd, X, Y, 0, BASE, GAIN, OFFSET, true);
         data.push(bmd);  // Base bedrock height
         
-        for(i in 0...2) {
-            bmd = new BitmapData(200, 200, false, 0);
-            rp.fill(bmd, X, Y, 0, BASE + (i / 75), GAIN, OFFSET - (i / 7.5), true);
-            data.push(bmd);
+        for(i in 1...3) {
             bmd = new BitmapData(200, 200, false, 0);
             rp.fill(bmd, X, Y, 0, BASE + (i / 100), GAIN, OFFSET - (i / 5), true);
+            data.push(bmd);
+            bmd = new BitmapData(200, 200, false, 0);
+            rp.fill(bmd, X, Y, 0, BASE + (i / 75), GAIN, OFFSET - (i / 7.5), true);
             data.push(bmd);
         }
 

@@ -4,7 +4,7 @@ import experiments.newexplorer.world.World;
 
 class Explorer {
     public static function main() {
-        haxe.Log.trace = function(v:Dynamic,?i){flash.Lib.trace("Explorer: "+v);};
+        haxe.Log.trace = function(v:Dynamic,?i){flash.Lib.trace("Explorer: "+v+"\n");};
         var main_obj = new Explorer();
     }
 
