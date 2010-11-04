@@ -1,3 +1,5 @@
+package experiments;
+
 import flash.display.Sprite;
 import flash.text.TextField;
 
@@ -93,17 +95,21 @@ class Game extends Sprite {
 
     function get_map(mx, my, w, h) {
         var resmap = new Array();
-        var xstep; var xstart;
-        var ystep; var ystart;
+        var xstep; var xstart; var startx;
+        var ystep; var ystart; var starty;
+        startx = mx;
+        starty = my;
+        xstep = 1;
+        ystep = 1;
         if(orientation == 'NE') {
-            x_xstep = 1;
-            x_ystep = 1;
-            y_xstep = -1;
+            var x_xstep = 1;
+            var x_ystep = 1;
+            var y_xstep = -1;
             startx = mx;
             starty = my - (h >> 1);
         }
-        currx = startx;
-        curry = starty;
+        var currx = startx;
+        var curry = starty;
         for(ny in 0...h) {
             resmap[ny] = new Array();
             for(nx in 0...w) {

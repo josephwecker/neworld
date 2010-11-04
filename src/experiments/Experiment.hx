@@ -1,4 +1,4 @@
-
+package experiments;
 
 class Experiment extends flash.display.Sprite {
     var noisy : flash.display.BitmapData;

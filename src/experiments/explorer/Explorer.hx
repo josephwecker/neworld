@@ -1,5 +1,7 @@
-import Map;
-import Player;
+package experiments.explorer;
+
+import experiments.explorer.Map;
+import experiments.explorer.Player;
 
 class Explorer {
     var map :      Map;

@@ -1,4 +1,5 @@
-import Map;
+package experiments.explorer;
+import experiments.explorer.Map;
 
 class Player {
     public function new() {

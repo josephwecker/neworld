@@ -1,3 +1,5 @@
+package experiments;
+
 import flash.display.BitmapData;
 import flash.display.Bitmap;
 import flash.geom.Rectangle;
@@ -9,12 +11,12 @@ import RidgedPerlin;
 //import flash.filters.ShaderFilter;
 //import flash.utils.ByteArray;
 
-class Exp2 {
+class Exp3 {
     static var maps = new Array<BitmapData>();
 
     public static function main() {
        haxe.Log.trace = function(v:Dynamic,?i){flash.Lib.trace("Explorer: "+v);};
-       var exp2 = new Exp2();
+       var exp3 = new Exp3();
     }
 
     public function new() {

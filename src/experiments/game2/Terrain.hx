@@ -1,3 +1,5 @@
+package experiments.game2;
+
 class Terrain {
     // 0: air
     // 1: granite

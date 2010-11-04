@@ -1,6 +1,8 @@
+package experiments.explorer;
+
 import RidgedPerlin;
 import flash.display.BitmapData;
-import Utils;
+import neworld.Utils;
 //using  Utils;
 
 class Map {

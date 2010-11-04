@@ -1,3 +1,5 @@
+package experiments;
+
 import flash.display.BitmapData;
 import flash.display.Bitmap;
 import flash.geom.Rectangle;

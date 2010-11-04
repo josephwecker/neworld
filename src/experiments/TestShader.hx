@@ -1,4 +1,4 @@
-package experiments.shader;
+package experiments;
 
 import format.pbj.Data;
 

@@ -1,10 +1,11 @@
+package experiments;
 import Simplex;
 import haxe.Timer;
 
-class STest {
+class TestSimplex {
     static public function main() {
         haxe.Log.trace = function(v:Dynamic,?i){flash.Lib.trace("STest: "+v);};
-        var stest = new STest();
+        var stest = new TestSimplex();
     }
 
     public function new() {

@@ -1,4 +1,4 @@
-package ;
+package experiments.explorer;
 
 import de.polygonal.core.event.IObserver;
 import de.polygonal.core.event.Observable;
@@ -6,7 +6,7 @@ import de.polygonal.core.time.Timebase;
 import de.polygonal.core.time.TimebaseEvent;
 import flash.display.BitmapData;
 import flash.display.Bitmap;
-import Utils;
+import neworld.Utils;
 
 /* Extends sprite for all the events etc., but never actually displays anything
  * directly- only has main_bitmap display to the screen.
@@ -21,12 +21,13 @@ class ViewPort extends flash.display.Sprite,
     var view_data : BitmapData;
     var main_bitmap : Bitmap;
     var copy_point : flash.geom.Point;
-
+    public var key : Int;
     var projection : Projection;
 
     public function new(player, map) {
         super();
 
+        key = 1;
         flash.Lib.current.addChild(this);
         flash.Lib.current.cacheAsBitmap =   true;
         stage.scaleMode =                   flash.display.StageScaleMode.NO_SCALE;

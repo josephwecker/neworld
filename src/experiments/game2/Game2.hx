@@ -1,13 +1,15 @@
-import flash.display.Sprite;
-import Terrain;
+package experiments.game2;
 
-class Game extends Sprite {
+import flash.display.Sprite;
+import experiments.game2.Terrain;
+
+class Game2 extends Sprite {
     var t : Terrain;
     var px : Int;
     var py : Int;
     static public function main() {
         haxe.Log.trace = haxeTrace;
-        var main_obj = new Game();
+        var main_obj = new Game2();
     }
 
     public static function haxeTrace(v: Dynamic, ?infos : Dynamic) {
@@ -20,8 +22,8 @@ class Game extends Sprite {
         py = 0;
         t = new Terrain();
         flash.Lib.current.addEventListener(flash.events.Event.ENTER_FRAME,onEnterFrame);
-        flash.Lib.current.addEventListener(flash.events.Event.ACTIVATE, onResize);
-        flash.Lib.current.addEventListener(flash.events.Event.RESIZE, onResize);
+        //flash.Lib.current.addEventListener(flash.events.Event.ACTIVATE, onResize);
+        //flash.Lib.current.addEventListener(flash.events.Event.RESIZE, onResize);
     }
     
     public static function safeDestroy (obj:Dynamic, ?destroy:Bool=true) :Bool {

@@ -1,7 +1,10 @@
+package experiments.game2;
+
 import sandy.core.Scene3D;
 
 import sandy.core.scenegraph.Group;
 import sandy.core.scenegraph.Camera3D;
+import sandy.core.scenegraph.Geometry3D;
 import sandy.core.data.Vertex;
 
 import sandy.materials.Appearance;
@@ -14,8 +17,8 @@ import sandy.materials.attributes.MaterialAttributes;
 import sandy.primitive.Plane3D;
 import sandy.primitive.PrimitiveMode;
 
-import Map;
-import Utils;
+import experiments.explorer.Map;
+import neworld.Utils;
 
 class Viewer extends flash.display.Sprite {
     var scene : Scene3D;
@@ -67,14 +70,14 @@ class Viewer extends flash.display.Sprite {
 
 class TerrainPlane extends Plane3D {
     var map : Map;
-    var perlin : Bitmap;
+    var perlin : flash.display.BitmapData;
     public function new(map) {
         super(null, 128, 64, 128, 64, Plane3D.ZX_ALIGNED, PrimitiveMode.TRI);
         this.map = map;
         this.perlin = map.layers[0];
         enableBackFaceCulling = false;
-        //update_geom();
-        parseBMD();
+        update_geom();
+        //parseBMD();
     }
 
     function update_geom() {
@@ -86,7 +89,7 @@ class TerrainPlane extends Plane3D {
             i += 1;
         }
     }
-	private function parseBMD() : Void
+	/*private function parseBMD() : Void
 	{
 		var myGeometry:Geometry3D = geometry;
 		var i:Int = 0;
@@ -103,7 +106,7 @@ class TerrainPlane extends Plane3D {
 			//trace(coordX, coordY);
 		}
 		updateForGeometryChange(myGeometry, updateNormals, updateBounds);
-	}
+	}*/
 
 	private inline function getAVG(coordX:Int, coordY:Int, spread:Int) : Float
 	{
