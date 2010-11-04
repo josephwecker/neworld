@@ -36,5 +36,7 @@ class SampleMap {
             rp.fill(bmd, X, Y, 0, BASE + (i / 100), GAIN, OFFSET - (i / 5), true);
             data.push(bmd);
         }
+
+        data.reverse();  // Top-most first
     }
 }

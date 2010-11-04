@@ -15,8 +15,10 @@ class World {
     }
 
     function create_world() {
-        for(layer in map.data) {
-            trace("Layer - "+layer.getPixel(100,100));
+        for(px in 0...map.data[0].width) {
+            for(py in 0...map.data[0].height) {
+
+            }
         }
     }
 
