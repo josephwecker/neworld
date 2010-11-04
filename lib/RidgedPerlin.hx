@@ -120,7 +120,7 @@ class RidgedPerlin {
 	minColor = 255;
 	maxColor = 0;
 
-    trace("baseX="+baseX+" | iXoffset="+iXoffset);
+    //trace("baseX="+baseX+" | iXoffset="+iXoffset);
 
     for ( py in 0...height )
     {
@@ -150,8 +150,8 @@ class RidgedPerlin {
 			var Y = Std.int(yf) & 255;
 			var Z = Std.int(zf) & 255;
 
-            if(i == 0 && px == 0 && py == 0) trace("_x="+_x+" | fFreq="+fFreq +
-                " | x="+x +" | xf="+xf+" | X="+X);
+            //if(i == 0 && px == 0 && py == 0) trace("_x="+_x+" | fFreq="+fFreq +
+            //    " | x="+x +" | xf="+xf+" | X="+X);
 
 			x -= xf;
 			y -= yf;
@@ -231,7 +231,7 @@ class RidgedPerlin {
 		  
         }
 
-        var color = Std.int( ( s * fPersMax ) * 128 );
+        /*var color = Std.int( ( s * fPersMax ) * 128 );
      	
 		if( _clamp ) {
 			if (color >= 255 ) color = 255;
@@ -243,7 +243,12 @@ class RidgedPerlin {
             + ((color-32) << 8) + (color-32) );
         else {
             bitmap.setPixel(px, py, (color << 16));
-        }
+        }*/
+        // TODO: Needs clamp still!!
+        bitmap.setPixel(px, py, Std.int(s * fPersMax * (0xffffff)));
+
+        //var color = Std.int((s * fPersMax) * (0xff >> 1));
+        //bitmap.setPixel(px, py, (color << 16) + (color << 8) + color);
 
         _x += _baseFactor;
       }

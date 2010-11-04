@@ -35,7 +35,7 @@ def flatten(l, ltypes=(list, tuple)):
     return ltype(l)
 
 sources = ['./', 'src', 'lib']
-setup(dirs=sources, runner='smart_runner', hasher=mtime_hasher)
+setup(dirs=sources, runner='smart_runner')
 
 #------------------------------------------------------
 

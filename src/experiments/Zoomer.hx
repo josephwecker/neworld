@@ -38,18 +38,19 @@ class Zoomer extends flash.display.Sprite { //, implements IObserver {
         flash.Lib.current.contextMenu.hideBuiltInItems();
         flash.Lib.current.mouseEnabled =    false;
 
-        base =        0.00016; // Keep as power of 2!
+        base =        0.002; // Keep as power of 2!
         gain =        1.25;
         offset =      0.7;
         octaves =     7;
         persistence = 0.9;
 
-        mainbmpdat = new BitmapData(500,500,false,0);
-        scaler =     100;
-        rp =         new RidgedPerlin(Math.ceil(Math.random() * 1000), octaves, persistence);
+        mainbmpdat = new BitmapData(200,200,false,0);
+        scaler =     0;
+        //rp =         new RidgedPerlin(Math.ceil(Math.random() * 1000), octaves, persistence);
+        rp =         new RidgedPerlin(156, octaves, persistence);
         mainbmp =    new Bitmap(mainbmpdat, flash.display.PixelSnapping.ALWAYS, false);
 
-        //update(null);
+        do_update(null);
         flash.Lib.current.addChild(mainbmp);
         flash.Lib.current.stage.addEventListener(flash.events.KeyboardEvent.KEY_DOWN, do_update);
         //Timebase.attach(this, TimebaseEvent.RENDER);
@@ -60,11 +61,14 @@ class Zoomer extends flash.display.Sprite { //, implements IObserver {
         mainbmpdat.lock();
         //var real_base = base * (1 / (scaler * scaler * scaler));
         //rp.fill(mainbmpdat, 0, 0, 0, real_base, gain, offset, true);
-        rp.fill(mainbmpdat, scaler * 128, scaler * 64, 0, base, gain, offset, true);
+        //rp.fill(mainbmpdat, scaler * 128, scaler * 64, 0, base, gain, offset, true);
+        //rp.fill(mainbmpdat, 300 + (scaler*50), 300 + (scaler*25), 0, base, gain, offset, true);
+        rp.fill(mainbmpdat, 300, 300, 0, base + (scaler / 75),
+        gain, offset - (scaler / 7.5), true);
         mainbmpdat.unlock();
         //var incby = 128.0 / real_base;   // SHOWS INFINITE LANDSCAPE
         //trace("repeat var: "+incby);
         //scaler += incby;
-        scaler += 0.8;
+        scaler += 1;
     }
 }
