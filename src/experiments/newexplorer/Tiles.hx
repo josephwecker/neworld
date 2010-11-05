@@ -17,6 +17,7 @@ class Tile {
 
     var top_template     :Array<Int>;
     var top_stamp        :Vector<UInt>;
+    var render_pool      :RenderedTilePool;
     //var top_stamp        :Shape;
     public function new(type, ax, ay, ox, w, h) {
         this.type = type;
@@ -25,6 +26,7 @@ class Tile {
         offset_x  = ox;
         width     = w;
         height    = h;
+        render_pool = new RenderedTilePool();
     }
 
     public function render(col :Column, dat :BitmapData, x :Int, y :Int, ref_height :Int, ?hi=false) {
@@ -34,15 +36,22 @@ class Tile {
         y = y - norm_hdiff;
 
         var base_color = 2 * Math.floor(col.total_height / 0xffff * 64);
+        if(hi) {
+            base_color = 0xFF000000 +
+                (base_color<<16)+((base_color>>1)<<8)+(base_color>>1);
+        } else {
+            base_color = 0xFF000000 +
+                ((base_color>>1)<<16)+(base_color<<8)+(base_color>>1);
+        }
         var attribs :RenderOpts = {
-            key:             'iso' + base_color,
-            base_color:      base_color,
-            template:        top_template,
-            template_width:  width,
-            template_height: height,
-            renderer:        this.tile_render
+            key:        'iso' + base_color,
+            base_color: base_color,
+            template:   top_template,
+            width:      width,
+            height:     height,
+            renderer:   this.tile_render
             };
-        var bmd = renderpool.get_rendered(attribs);
+        var bmd = render_pool.get_rendered(attribs);
         dat.copyPixels(bmd, bmd.rect, new flash.geom.Point(x,y));
     }
 
@@ -51,40 +60,14 @@ class Tile {
         var i = 0;
         for(pixel in opts.template) {
             if(pixel == 0) top_stamp[i] = 0;
-            else {
-                var trans = 0xFF000000;
-                var c = opts.base_color;
-                if(hi) top_stamp[i] = trans + (c<<16)+((c>>1)<<8)+(c>>1); // redish
-                else   top_stamp[i] = trans + ((c>>1)<<16)+(c<<8)+(c>>1); // greenish
-            }
+            else top_stamp[i] = opts.base_color;
             i += 1;
         }
 
         var bmd = new BitmapData(opts.width, opts.height, true, 0);
         bmd.setVector(bmd.rect, top_stamp);
-        //bmd.setVector(new flash.geom.Rectangle(0,0,opts.width,opts.height), top_stamp);
         return bmd;
     }
-/*
-            top_stamp = new Vector<UInt>(width * height, true);
-            var i = 0;
-            for(pixel in top_template) {
-                if(pixel == 0) top_stamp[i] = 0;
-                else {
-                    var trans = 0xFF000000;
-                    var c = pixel * Math.floor(col.total_height / 0xffff * 64);
-                    if(hi) top_stamp[i] = trans + (c<<16)+((c>>1)<<8)+(c>>1); // redish
-                    else   top_stamp[i] = trans + ((c>>1)<<16)+(c<<8)+(c>>1); // greenish
-                }
-                i += 1;
-            }
-
-            var bmd = new BitmapData(width, height, true, 0);
-            bmd.setVector(new flash.geom.Rectangle(0,0,width,height), top_stamp);
-            dat.copyPixels(bmd, bmd.rect, new flash.geom.Point(x,y));
-        }
-    }
-*/
 }
 
 class DimetricTile extends Tile {
@@ -139,12 +122,12 @@ class IsometricTile extends Tile {
 }
 
 typedef RenderOpts = {
-    var key             :String;
-    var base_color      :UInt;
-    var template        :Array<Int>;
-    var width     :UInt;
-    var height    :UInt;
-    var renderer        :RenderOpts->BitmapData;
+    var key        :String;
+    var base_color :UInt;
+    var template   :Array<Int>;
+    var width      :UInt;
+    var height     :UInt;
+    var renderer   :RenderOpts->BitmapData;
 }
 
 class RenderedTilePool {

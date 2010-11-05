@@ -10,6 +10,7 @@ import de.polygonal.core.time.Timebase;
 import de.polygonal.core.time.TimebaseEvent;
 
 class Explorer implements IObserver {
+    public var key : Int;
     var vp : ViewPort;
     var dir : Int;
     var world : World;
@@ -21,6 +22,7 @@ class Explorer implements IObserver {
     }
 
     public function new() {
+        key = 0;
         world = new World();
         vp = new ViewPort(world);
         D.orientation = D.NORTHEAST;
