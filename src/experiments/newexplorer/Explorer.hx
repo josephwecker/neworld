@@ -14,6 +14,6 @@ class Explorer {
         var world = new World();
         var vp = new ViewPort(world);
         //vp.render_from(world.columns[100][100], D.NORTHEAST);
-        vp.render_from(world.columns[100][100], D.NORTH);
+        vp.render_from(world.columns[100][100], D.NORTHEAST);
     }
 }

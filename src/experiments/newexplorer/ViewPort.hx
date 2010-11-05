@@ -194,7 +194,12 @@ class ViewPort extends flash.display.Sprite { // For events
                 'vx:          ' + vx,
                 'vy:          ' + vy,
                 ].join("\n"));
-        // TODO: Mark absolute center pixel red for debugging
+
+        view_data.setPixel(vp_center_x, vp_center_y, 0x000000);
+        view_data.setPixel(vp_center_x+1, vp_center_y + 1, 0x00ff00);
+        view_data.setPixel(vp_center_x+1, vp_center_y - 1, 0x00ff00);
+        view_data.setPixel(vp_center_x-1, vp_center_y + 1, 0x00ff00);
+        view_data.setPixel(vp_center_x-1, vp_center_y - 1, 0x00ff00);
         view_data.unlock();
     }
 }
