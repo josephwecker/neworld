@@ -1,5 +1,6 @@
 package experiments.newexplorer;
 
+import experiments.newexplorer.Tiles;
 import experiments.newexplorer.world.World;
 import experiments.newexplorer.world.Column;
 import flash.display.BitmapData;
@@ -28,68 +29,15 @@ class D {
     public inline static var DOWNLEFT  = 5;
     public inline static var LEFT      = 6;
     public inline static var UPLEFT    = 7;
-
     public static function rel(dir:Int) {return (dir + _instance._orientation) % 8;}
-
-    private function new() {
-        _orientation = NORTH;
-    }
-
+    private function new() {_orientation = NORTH;}
     static function get_tile_type() :TileType {
         if(_instance._orientation & 1 == 1) return isometric;
         else return dimetric;
     }
-
     static function get_orientation() :Int {return _instance._orientation;}
-    static function set_orientation(o:Int) :Int {
-        _instance._orientation = o;
-        return o;
-    }
+    static function set_orientation(o:Int) :Int {_instance._orientation = o;return o;}
 }
-
-enum TileType {dimetric; isometric;}
-
-class Tile {
-    public var type:       TileType;
-    public var advance_x : Int;
-    public var advance_y : Int;
-    public var offset_x :  Int;
-    public var width:      Int;
-    public var height:     Int;
-    public function new(type, ax, ay, ox, w, h) {
-        this.type = type;
-        advance_x = ax;
-        advance_y = ay;
-        offset_x  = ox;
-        width     = w;
-        height    = h;
-    }
-
-    public function render(col :Column, dat :BitmapData, x :Int, y :Int, ref_height :Int) {
-        dat.setPixel(x + (width >> 1), y + (height >> 1), 0x990000);
-        /*trace([
-                'col height: '+col.total_height,
-                'x:          '+x,
-                'y:          '+y,
-                'ref_height: '+ref_height
-                ].join("\n"));*/
-    }
-}
-
-class DimetricTile extends Tile {
-    public function new() {
-                    //  ax  ay  ox   w   h
-        super(dimetric, 24, 12,  4, 24, 12);
-    }
-}
-
-class IsometricTile extends Tile {
-    public function new() {
-                     //  ax  ay  ox   w   h
-        super(isometric, 34, 10, 17, 34, 17);
-    }
-}
-
 
 class ViewPort extends flash.display.Sprite { // For events
     var portal_width  (get_portal_width, null)  : Int;
@@ -110,10 +58,10 @@ class ViewPort extends flash.display.Sprite { // For events
         flash.Lib.current.cacheAsBitmap =   true;
         stage.scaleMode =                   flash.display.StageScaleMode.NO_SCALE;
         stage.align =                       flash.display.StageAlign.TOP_LEFT;
-        stage.showDefaultContextMenu=       false;
+        /*stage.showDefaultContextMenu=       false;
         flash.Lib.current.contextMenu =     new flash.ui.ContextMenu();
         flash.Lib.current.contextMenu.hideBuiltInItems();
-        flash.Lib.current.mouseEnabled =    false;
+        flash.Lib.current.mouseEnabled =    false;*/
 
         main_bitmap = new Bitmap(null, flash.display.PixelSnapping.ALWAYS, false);
         calculate_boundaries(null);
@@ -127,7 +75,7 @@ class ViewPort extends flash.display.Sprite { // For events
     inline function get_portal_height(): Int { return stage.stageHeight;}
 
     function calculate_boundaries(_) {
-        view_data = new BitmapData(portal_width, portal_height, false, 0xFFFFFF);
+        view_data = new BitmapData(portal_width, portal_height, false, 0);
         main_bitmap.bitmapData = view_data;
         stage.scaleMode = flash.display.StageScaleMode.NO_SCALE;
         stage.align = flash.display.StageAlign.TOP_LEFT;
@@ -147,6 +95,7 @@ class ViewPort extends flash.display.Sprite { // For events
     }
 
     public function render_from(mid_col:Column, top_dir:Int, ?long_offset=0, ?lat_offset=0) {
+        calculate_boundaries(null);
         view_data.lock();
 
         D.orientation = top_dir;
@@ -160,7 +109,7 @@ class ViewPort extends flash.display.Sprite { // For events
         var over_tiles  :Int = Math.floor(vp_center_x / tile.width) + 2;
         // TODO: long/lat offset added to these offsets, depending on orientation
         var vx          :Int = vp_center_x - (over_tiles * tile.width) - (tile.width >> 1);
-        var vy          :Int = vp_center_y - (up_tiles * tile.height) - (tile.height >> 1);
+        var vy          :Int = vp_center_y - (up_tiles * tile.height) - (tile.height >> 1) + 1;
 
         var vx_left_boundary = vx;
 
@@ -170,8 +119,7 @@ class ViewPort extends flash.display.Sprite { // For events
             var leftmost_col = curr_col;
             var leftmost_vx  = vx;
             while(vx < portal_width) {
-                // TODO: if center_column send flag in for special rendering
-                tile.render(curr_col, view_data, vx, vy, center_height);
+                tile.render(curr_col, view_data, vx, vy, center_height, curr_col == mid_col);
                 vx += tile.advance_x;
                 curr_col = curr_col.n[D.rel(D.RIGHT)];
             }
