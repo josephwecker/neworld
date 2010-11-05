@@ -94,11 +94,10 @@ class ViewPort extends flash.display.Sprite { // For events
         } catch(_:Dynamic) {}
     }
 
-    public function render_from(mid_col:Column, top_dir:Int, ?long_offset=0, ?lat_offset=0) {
+    public function render_from(mid_col:Column, ?long_offset=0, ?lat_offset=0) {
         calculate_boundaries(null);
         view_data.lock();
 
-        D.orientation = top_dir;
         var tile = D.tile_type == isometric ? isotile : dimtile;
         var center_height = mid_col.total_height;
 

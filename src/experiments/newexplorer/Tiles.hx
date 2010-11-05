@@ -28,17 +28,51 @@ class Tile {
     }
 
     public function render(col :Column, dat :BitmapData, x :Int, y :Int, ref_height :Int, ?hi=false) {
+        if(top_template == null) return;
         var height_diff = col.total_height - ref_height;
-        var norm_hdiff = Math.round(height_diff / 0xffff * 160);
+        var norm_hdiff = Math.round(height_diff / 0xffff * 192);
         y = y - norm_hdiff;
-        if(top_template != null) {
+
+        var base_color = 2 * Math.floor(col.total_height / 0xffff * 64);
+        var attribs :RenderOpts = {
+            key:             'iso' + base_color,
+            base_color:      base_color,
+            template:        top_template,
+            template_width:  width,
+            template_height: height,
+            renderer:        this.tile_render
+            };
+        var bmd = renderpool.get_rendered(attribs);
+        dat.copyPixels(bmd, bmd.rect, new flash.geom.Point(x,y));
+    }
+
+    public function tile_render(opts:RenderOpts) : BitmapData {
+        var top_stamp = new Vector<UInt>(opts.width * opts.height, true);
+        var i = 0;
+        for(pixel in opts.template) {
+            if(pixel == 0) top_stamp[i] = 0;
+            else {
+                var trans = 0xFF000000;
+                var c = opts.base_color;
+                if(hi) top_stamp[i] = trans + (c<<16)+((c>>1)<<8)+(c>>1); // redish
+                else   top_stamp[i] = trans + ((c>>1)<<16)+(c<<8)+(c>>1); // greenish
+            }
+            i += 1;
+        }
+
+        var bmd = new BitmapData(opts.width, opts.height, true, 0);
+        bmd.setVector(bmd.rect, top_stamp);
+        //bmd.setVector(new flash.geom.Rectangle(0,0,opts.width,opts.height), top_stamp);
+        return bmd;
+    }
+/*
             top_stamp = new Vector<UInt>(width * height, true);
             var i = 0;
             for(pixel in top_template) {
                 if(pixel == 0) top_stamp[i] = 0;
                 else {
                     var trans = 0xFF000000;
-                    var c = ((6 - pixel) << 5) + norm_hdiff;
+                    var c = pixel * Math.floor(col.total_height / 0xffff * 64);
                     if(hi) top_stamp[i] = trans + (c<<16)+((c>>1)<<8)+(c>>1); // redish
                     else   top_stamp[i] = trans + ((c>>1)<<16)+(c<<8)+(c>>1); // greenish
                 }
@@ -48,9 +82,9 @@ class Tile {
             var bmd = new BitmapData(width, height, true, 0);
             bmd.setVector(new flash.geom.Rectangle(0,0,width,height), top_stamp);
             dat.copyPixels(bmd, bmd.rect, new flash.geom.Point(x,y));
-
         }
     }
+*/
 }
 
 class DimetricTile extends Tile {
@@ -104,6 +138,32 @@ class IsometricTile extends Tile {
     }
 }
 
+typedef RenderOpts = {
+    var key             :String;
+    var base_color      :UInt;
+    var template        :Array<Int>;
+    var width     :UInt;
+    var height    :UInt;
+    var renderer        :RenderOpts->BitmapData;
+}
+
+class RenderedTilePool {
+    var rendered : Hash<BitmapData>;
+    public function new() {
+        rendered = new Hash<BitmapData>();
+    }
+
+    public function get_rendered(opts:RenderOpts) {
+        var key = opts.key;
+        if(rendered.exists(key)) return rendered.get(key);
+        else {
+            var bmd = opts.renderer(opts);
+            rendered.set(key, bmd);
+            return bmd;
+        }
+    }
+
+}
 
 /*class TileGraphic extends Shape {
     public function new() {
