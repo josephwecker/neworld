@@ -1,0 +1,7 @@
+-swf tmp.swf
+-main Mac
+-cp src
+-debug
+#--display classes
+#--times
+#--interp

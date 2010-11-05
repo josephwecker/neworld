@@ -4,7 +4,33 @@ import experiments.newexplorer.world.Column;
 import flash.display.BitmapData;
 import flash.Vector;
 
+import haxe.macro.Expr;
+import haxe.macro.Context;
+
 enum TileType {dimetric; isometric;}
+
+#if macro
+@:macro class TemplateLoader {
+    public static function template(name :Expr) :Expr{
+        switch(name.expr) {
+            case EConst(c):
+                switch(c) {
+                    case CString(name):
+                        return load_template(name);
+                    default:
+                }
+            default:
+        }
+        Context.error("Should be an integer", name.pos);
+        return null;
+    }
+
+    public static function load_template(name:String) {
+        trace("W00t!  - "+name);
+        return null;
+    }
+}
+#end
 
 class Tile {
     public var type      :TileType;
@@ -20,6 +46,9 @@ class Tile {
     var render_pool      :RenderedTilePool;
     //var top_stamp        :Shape;
     public function new(type, ax, ay, ox, w, h) {
+#if macro
+        TemplateLoader.template("heya- did this work?");
+#end
         this.type = type;
         advance_x = ax;
         advance_y = ay;
@@ -79,6 +108,7 @@ class DimetricTile extends Tile {
 
 class IsometricTile extends Tile {
     public function new() {
+
         top_template = [
             0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
             0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
