@@ -62,7 +62,7 @@ class Tile {
         if(top_template == null) return;
         var height_diff = col.total_height - ref_height;
         var norm_hdiff = Math.round(height_diff / 0xffff * 192);
-        y = y - norm_hdiff;
+        //y = y - norm_hdiff;
 
         var base_color = 2 * Math.floor(col.total_height / 0xffff * 64);
         if(hi) {

@@ -2,6 +2,7 @@
 from build_utils import *
 
 def build():
+    build_assets()
     mkdir('swfs')
     experiments()
 

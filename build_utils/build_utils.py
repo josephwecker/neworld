@@ -9,7 +9,7 @@
 #  * Make sure all haxe and haxelib libraries are up-do-date / ready to go
 #  * Directory creation when needed
 
-import os, sys
+import os, sys, glob
 from fabricate import *
 
 # Pop this stuff off of argv
@@ -66,6 +66,28 @@ def haxe(name, libs=[], resources=None):
             '-debug' if DEBUG else None,
             [['-lib',l] for l in libs]]
     run(cmd)
+
+ASSET_MAP = {'bitmap': 'flash.display.Bitmap',
+             'clip':   'flash.display.MovieClip',
+             'sound':  'flash.display.MovieClip'}
+
+def build_assets(import_name='Assets'):
+    run('mkdir', '-p', '.tmp')
+    class_dest = 'src/' + '/'.join(import_name.split('.')) + '.hx'
+    swfml = ['<?xml version="1.0" encoding="utf-8"?>','<movie><frame><library>']
+    hx = ['package %s;' % '.'.join(import_name.split('.')[0:-1]), '']
+    for subdir in glob.glob('assets/*'):
+        atype = subdir.split('/')[-1]
+        for f in glob.glob(subdir+'/*'):
+            name = '.'.join(f.split('/')[-1].split('.')[0:-1])
+            swfml.append('<%s id="%s" import="%s"/>' % (atype, name, f))
+            hx.append('class %s extends %s{public function new(){super();}}' % (name, ASSET_MAP[atype]))
+    swfml.append('</library></frame></movie>')
+    swfml_file = '.tmp/asset_lib.swfml'
+    file(swfml_file, 'w').write('\n'.join(swfml))
+    file(class_dest, 'w').write('\n'.join(hx))
+    run('swfmill', 'simple', '.tmp/asset_lib.swfml', '.tmp/asset_lib.swf')
+
 
 
 #------------------------------------------------------

@@ -29,7 +29,7 @@ class Explorer implements IObserver {
         curr_col = world.columns[100][100];
         flash.Lib.current.stage.addEventListener(flash.events.KeyboardEvent.KEY_DOWN, rotate);
         update(0, null, null);
-        Timebase.attach(this, TimebaseEvent.RENDER);
+        //Timebase.attach(this, TimebaseEvent.RENDER);
     }
 
     public function update(type : Int, source : Observable, data : Dynamic) {
