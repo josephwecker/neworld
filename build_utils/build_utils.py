@@ -76,18 +76,18 @@ ASSET_MAP = {'bitmap': 'flash.display.Bitmap',
              'sound':  'flash.display.MovieClip'}
 
 def build_assets(import_name='Assets', file_globs=[]):
-    class_dest = 'src/' + '/'.join(import_name.split('.')) + '.hx'
-    swfml = ['<?xml version="1.0" encoding="utf-8"?>',
-             '<movie frames="1" width="100" height="100" version="10"><frame><library>']
-    hx = ['package %s;' % '.'.join(import_name.split('.')[0:-1]), '']
+    package_parts = import_name.split('.')
+    package = '.'.join(package_parts[0:-1])
+    class_dest = 'src/' + '/'.join(package_parts) + '.hx'
+    swfml = ['<?xml version="1.0" encoding="utf-8"?>','<movie><frame><library>']
+    hx = ['package %s;' % package, '']
 
     for g in file_globs:
         for f in glob.glob(g):
             atype = re.findall('('+'|'.join(ASSET_MAP.keys())+')', f)[0]
-            name = '.'.join(f.split('/')[-1].split('.')[0:-1])
-            swfml.append('<%s id="%s" import="%s"/>' % (atype, name, f))
-            hx.append('class %s extends %s{public function new(){super();}}' % \
-                    (to_camelcase(name), ASSET_MAP[atype]))
+            name = to_camelcase('.'.join(f.split('/')[-1].split('.')[0:-1]))
+            swfml.append('<%s id="%s" import="%s"/>' % (atype, package+'.'+name, f))
+            hx.append('class %s extends %s{public function new(){super();}}'%(name, ASSET_MAP[atype]))
 
     swfml.append('</library></frame></movie>')
 
