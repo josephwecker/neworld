@@ -71,9 +71,9 @@ def haxe(name, libs=[], resources=[], assets=[]):
             [['-resource',r] for r in resources]]
     run(cmd)
 
-ASSET_MAP = {'bitmap': 'flash.display.Bitmap',
-             'clip':   'flash.display.MovieClip',
-             'sound':  'flash.display.MovieClip'}
+ASSET_MAP = {'png': ['flash.display.Bitmap',    'bitmap'],
+             'swf': ['flash.display.MovieClip', 'clip'],
+             'mp3': ['flash.media.Sound',       'sound']}
 
 def build_assets(import_name='Assets', file_globs=[]):
     package_parts = import_name.split('.')
@@ -84,10 +84,10 @@ def build_assets(import_name='Assets', file_globs=[]):
 
     for g in file_globs:
         for f in glob.glob(g):
-            atype = re.findall('('+'|'.join(ASSET_MAP.keys())+')', f)[0]
+            atype = ASSET_MAP[re.findall('\.('+'|'.join(ASSET_MAP.keys())+')$',f)[-1]]
             name = to_camelcase('.'.join(f.split('/')[-1].split('.')[0:-1]))
-            swfml.append('<%s id="%s" import="%s"/>' % (atype, package+'.'+name, f))
-            hx.append('class %s extends %s{public function new(){super();}}'%(name, ASSET_MAP[atype]))
+            swfml.append('<%s id="%s" import="%s"/>' % (atype[1], package+'.'+name, f))
+            hx.append('class %s extends %s{public function new(){super();}}'%(name, atype[0]))
 
     swfml.append('</library></frame></movie>')
 

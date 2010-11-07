@@ -1,6 +1,7 @@
 package experiments.newexplorer;
 
-import assets.Creatures;
+import assets.creatures.Display;
+import assets.creatures.Sounds;
 
 import experiments.newexplorer.world.Column;
 import flash.display.BitmapData;

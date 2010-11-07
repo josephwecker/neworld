@@ -1,5 +1,6 @@
 
-
-[ ] -
-[ ] - Timing loop (rendering & updating)
+* Continuous map
+* Correct scale for map
+* Basic column rendering & better template system
+* Secondary land layer algorithm
 

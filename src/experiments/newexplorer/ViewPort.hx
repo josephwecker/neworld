@@ -3,8 +3,12 @@ package experiments.newexplorer;
 import experiments.newexplorer.Tiles;
 import experiments.newexplorer.world.World;
 import experiments.newexplorer.world.Column;
+
 import flash.display.BitmapData;
 import flash.display.Bitmap;
+import flash.events.Event;
+
+import assets.creatures.Sounds;
 
 class D {
     static var _instance = new D();
@@ -48,11 +52,17 @@ class ViewPort extends flash.display.Sprite { // For events
     var isotile     :TileRenderer;
     var dimtile     :TileRenderer;
 
+    var curr_height      :Float;
+
+    var sounds_frogs:Frogs;
+    var sfchan      :flash.media.SoundChannel;
+
     public function new(world : World) {
         super();
         this.world = world;
         isotile = new IsometricTile();
         dimtile = new DimetricTile();
+        curr_height = 1;
 
         flash.Lib.current.addChild(this);
         flash.Lib.current.cacheAsBitmap =   true;
@@ -67,8 +77,25 @@ class ViewPort extends flash.display.Sprite { // For events
         calculate_boundaries(null);
         flash.Lib.current.addChild(main_bitmap);
 
-        stage.addEventListener(flash.events.Event.RESIZE, calculate_boundaries);
+        stage.addEventListener(Event.RESIZE, calculate_boundaries);
         stage.addEventListener(flash.events.KeyboardEvent.KEY_DOWN, maybe_fullscreen);
+        sounds_frogs = new Frogs();
+        loop_sound(null);
+    }
+
+    function loop_sound(e :Event) {
+        sfchan = sounds_frogs.play();
+        sfchan.addEventListener(Event.SOUND_COMPLETE, loop_sound);
+        adjust_sound();
+    }
+
+    function adjust_sound() {
+        if(sfchan != null) {
+            var trans = sfchan.soundTransform;
+            trans.volume = 1 - curr_height;
+            trace("VOL: "+trans.volume);
+            sfchan.soundTransform = trans;
+        }
     }
 
     inline function get_portal_width() : Int { return stage.stageWidth;}
@@ -97,6 +124,9 @@ class ViewPort extends flash.display.Sprite { // For events
     public function render_from(mid_col:Column, ?long_offset=0, ?lat_offset=0) {
         calculate_boundaries(null);
         view_data.lock();
+
+        curr_height = mid_col.total_height / 0xffff;
+        adjust_sound();
 
         var tile = D.tile_type == isometric ? isotile : dimtile;
         var center_height = mid_col.total_height;

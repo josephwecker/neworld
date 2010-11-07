@@ -2,7 +2,8 @@
 from build_utils import *
 
 def build():
-    build_assets('assets.Creatures', ['assets/bitmap/creatures/*'])
+    build_assets('assets.creatures.Display', ['assets/creatures/display/*'])
+    build_assets('assets.creatures.Sounds',  ['assets/creatures/sounds/f*'])
     mkdir('swfs')
     experiments()
 
@@ -20,6 +21,7 @@ def experiments():
     haxe('experiments.Game')
     haxe('experiments.game2.Game2')
     haxe('experiments.game2.Viewer',         libs=['sandy'])
-    haxe('experiments.newexplorer.Explorer', libs=['polygonal'], assets=['assets.Creatures'])
+    haxe('experiments.newexplorer.Explorer', libs=['polygonal'],
+        assets=['assets.creatures.Display', 'assets.creatures.Sounds'])
 
 main()
