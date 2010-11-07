@@ -8,3 +8,4 @@ swfs/
 Assets.hx
 .tmp
 asset_lib.swf
+src/assets

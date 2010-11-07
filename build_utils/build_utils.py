@@ -4,12 +4,11 @@
 # TODO:
 #  * Build subsections
 #  * Production vs. test environments
-#    * -debug flag
 #    * profiling and easy tracing
 #  * Make sure all haxe and haxelib libraries are up-do-date / ready to go
 #  * Directory creation when needed
 
-import os, sys, glob
+import os, sys, glob, re
 from fabricate import *
 
 # Pop this stuff off of argv
@@ -39,6 +38,9 @@ setup(dirs=sources, runner='smart_runner')
 
 #------------------------------------------------------
 
+def to_camelcase(s):
+    return ''.join([w.title() for w in s.split('_')]);
+
 def p(*args):
     '''Shorthand for joining path segments together into one path'''
     return os.path.normpath(os.path.join(*args))
@@ -56,7 +58,7 @@ def mkdir(*path):
 def rmdir(*path):
     run('rm', '-rf', p(*path))
 
-def haxe(name, libs=[], resources=None):
+def haxe(name, libs=[], resources=[], assets=[]):
     cmd = ['haxe',
             '-main', name,
             [['-cp',s] for s in sources],
@@ -64,29 +66,36 @@ def haxe(name, libs=[], resources=None):
             '-swf-version', 10,
             '--flash-strict',
             '-debug' if DEBUG else None,
-            [['-lib',l] for l in libs]]
+            [['-lib',l] for l in libs],
+            [['-swf-lib','.tmp/%s.swf' % a] for a in assets],
+            [['-resource',r] for r in resources]]
     run(cmd)
 
 ASSET_MAP = {'bitmap': 'flash.display.Bitmap',
              'clip':   'flash.display.MovieClip',
              'sound':  'flash.display.MovieClip'}
 
-def build_assets(import_name='Assets'):
-    run('mkdir', '-p', '.tmp')
+def build_assets(import_name='Assets', file_globs=[]):
     class_dest = 'src/' + '/'.join(import_name.split('.')) + '.hx'
-    swfml = ['<?xml version="1.0" encoding="utf-8"?>','<movie><frame><library>']
+    swfml = ['<?xml version="1.0" encoding="utf-8"?>',
+             '<movie frames="1" width="100" height="100" version="10"><frame><library>']
     hx = ['package %s;' % '.'.join(import_name.split('.')[0:-1]), '']
-    for subdir in glob.glob('assets/*'):
-        atype = subdir.split('/')[-1]
-        for f in glob.glob(subdir+'/*'):
+
+    for g in file_globs:
+        for f in glob.glob(g):
+            atype = re.findall('('+'|'.join(ASSET_MAP.keys())+')', f)[0]
             name = '.'.join(f.split('/')[-1].split('.')[0:-1])
             swfml.append('<%s id="%s" import="%s"/>' % (atype, name, f))
-            hx.append('class %s extends %s{public function new(){super();}}' % (name, ASSET_MAP[atype]))
+            hx.append('class %s extends %s{public function new(){super();}}' % \
+                    (to_camelcase(name), ASSET_MAP[atype]))
+
     swfml.append('</library></frame></movie>')
+
+    run('mkdir', '-p', '.tmp')
     swfml_file = '.tmp/asset_lib.swfml'
     file(swfml_file, 'w').write('\n'.join(swfml))
     file(class_dest, 'w').write('\n'.join(hx))
-    run('swfmill', 'simple', '.tmp/asset_lib.swfml', '.tmp/asset_lib.swf')
+    run('swfmill', 'simple', '.tmp/asset_lib.swfml', '.tmp/%s.swf' % import_name)
 
 
 
