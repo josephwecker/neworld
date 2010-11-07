@@ -17,6 +17,7 @@ class Explorer implements IObserver {
     var dir : Int;
     var world : World;
     var curr_col : Column;
+    var person : HumanoidSm;
 
     public static function main() {
         haxe.Log.trace = function(v:Dynamic,?i){flash.Lib.trace("Explorer: "+v+"\n");};
@@ -30,6 +31,8 @@ class Explorer implements IObserver {
         D.orientation = D.NORTHEAST;
         curr_col = world.columns[100][100];
         flash.Lib.current.stage.addEventListener(flash.events.KeyboardEvent.KEY_DOWN, rotate);
+        person = new HumanoidSm();
+        flash.Lib.current.addChild(person);
         update(0, null, null);
         //Timebase.attach(this, TimebaseEvent.RENDER);
     }
