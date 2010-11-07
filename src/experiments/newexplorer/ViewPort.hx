@@ -1,7 +1,5 @@
 package experiments.newexplorer;
 
-import assets.Creatures;
-
 import experiments.newexplorer.Tiles;
 import experiments.newexplorer.world.World;
 import experiments.newexplorer.world.Column;
@@ -47,9 +45,8 @@ class ViewPort extends flash.display.Sprite { // For events
     var view_data   :BitmapData;
     var main_bitmap :Bitmap;
     var world       :World;
-    var isotile     :Tile;
-    var dimtile     :Tile;
-    var person      :HumanoidSm;
+    var isotile     :TileRenderer;
+    var dimtile     :TileRenderer;
 
     public function new(world : World) {
         super();
@@ -69,10 +66,6 @@ class ViewPort extends flash.display.Sprite { // For events
         main_bitmap = new Bitmap(null, flash.display.PixelSnapping.ALWAYS, false);
         calculate_boundaries(null);
         flash.Lib.current.addChild(main_bitmap);
-        person = new HumanoidSm();
-        flash.Lib.current.addChild(person);
-        person.x = (portal_width - person.width) / 2;
-        person.y = (portal_height / 2) - person.height;
 
         stage.addEventListener(flash.events.Event.RESIZE, calculate_boundaries);
         stage.addEventListener(flash.events.KeyboardEvent.KEY_DOWN, maybe_fullscreen);
@@ -82,7 +75,7 @@ class ViewPort extends flash.display.Sprite { // For events
     inline function get_portal_height(): Int { return stage.stageHeight;}
 
     function calculate_boundaries(_) {
-        view_data = new BitmapData(portal_width, portal_height, false, 0);
+        view_data = new BitmapData(portal_width, portal_height, false, 0x113311);
         main_bitmap.bitmapData = view_data;
         stage.scaleMode = flash.display.StageScaleMode.NO_SCALE;
         stage.align = flash.display.StageAlign.TOP_LEFT;

@@ -28,16 +28,32 @@ class Explorer implements IObserver {
         D.orientation = D.NORTHEAST;
         curr_col = world.columns[100][100];
         flash.Lib.current.stage.addEventListener(flash.events.KeyboardEvent.KEY_DOWN, rotate);
-        update(0, null, null);
+
+        rotate(null);
+        //update(0, null, null);
         //Timebase.attach(this, TimebaseEvent.RENDER);
     }
 
     public function update(type : Int, source : Observable, data : Dynamic) {
-        curr_col = curr_col.n[D.rel(D.UP)];
-        vp.render_from(curr_col);
+        //curr_col = curr_col.n[D.rel(D.UP)];
+        //vp.render_from(curr_col);
     }
 
-    function rotate(_) {
-        D.orientation = D.rel(D.RIGHT);
+    function rotate(e :flash.events.KeyboardEvent) {
+        if(e != null) {
+            var s = String.fromCharCode(e.charCode);
+            if(s == 'L') D.orientation = D.rel(D.RIGHT);
+            else if(s == 'H') D.orientation = D.rel(D.LEFT);
+            else if(s == 'h') curr_col = curr_col.n[D.rel(D.LEFT)];
+            else if(s == 'k') curr_col = curr_col.n[D.rel(D.UP)];
+            else if(s == 'j') curr_col = curr_col.n[D.rel(D.DOWN)];
+            else if(s == 'l') curr_col = curr_col.n[D.rel(D.RIGHT)];
+            else if(s == 'y') curr_col = curr_col.n[D.rel(D.UPLEFT)];
+            else if(s == 'u') curr_col = curr_col.n[D.rel(D.UPRIGHT)];
+            else if(s == 'b') curr_col = curr_col.n[D.rel(D.DOWNLEFT)];
+            else if(s == 'n') curr_col = curr_col.n[D.rel(D.DOWNRIGHT)];
+        }
+
+        vp.render_from(curr_col);
     }
 }

@@ -1,5 +1,7 @@
 package experiments.newexplorer;
 
+import assets.Creatures;
+
 import experiments.newexplorer.world.Column;
 import flash.display.BitmapData;
 import flash.Vector;
@@ -9,30 +11,7 @@ import haxe.macro.Context;
 
 enum TileType {dimetric; isometric;}
 
-#if macro
-@:macro class TemplateLoader {
-    public static function template(name :Expr) :Expr{
-        switch(name.expr) {
-            case EConst(c):
-                switch(c) {
-                    case CString(name):
-                        return load_template(name);
-                    default:
-                }
-            default:
-        }
-        Context.error("Should be an integer", name.pos);
-        return null;
-    }
-
-    public static function load_template(name:String) {
-        trace("W00t!  - "+name);
-        return null;
-    }
-}
-#end
-
-class Tile {
+class TileRenderer {
     public var type      :TileType;
     public var advance_x :Int;
     public var advance_y :Int;
@@ -44,11 +23,9 @@ class Tile {
     var top_template     :Array<Int>;
     var top_stamp        :Vector<UInt>;
     var render_pool      :RenderedTilePool;
-    //var top_stamp        :Shape;
+    var person           :HumanoidSm;
+
     public function new(type, ax, ay, ox, w, h) {
-#if macro
-        TemplateLoader.template("heya- did this work?");
-#end
         this.type = type;
         advance_x = ax;
         advance_y = ay;
@@ -56,13 +33,14 @@ class Tile {
         width     = w;
         height    = h;
         render_pool = new RenderedTilePool();
+        person = new HumanoidSm();
     }
 
     public function render(col :Column, dat :BitmapData, x :Int, y :Int, ref_height :Int, ?hi=false) {
         if(top_template == null) return;
         var height_diff = col.total_height - ref_height;
         var norm_hdiff = Math.round(height_diff / 0xffff * 192);
-        //y = y - norm_hdiff;
+        y = y - norm_hdiff;
 
         var base_color = 2 * Math.floor(col.total_height / 0xffff * 64);
         if(hi) {
@@ -78,10 +56,16 @@ class Tile {
             template:   top_template,
             width:      width,
             height:     height,
-            renderer:   this.tile_render
-            };
+            renderer:   this.tile_render};
+
         var bmd = render_pool.get_rendered(attribs);
         dat.copyPixels(bmd, bmd.rect, new flash.geom.Point(x,y));
+        if(hi) {
+            //var p = cast(person, Bitmap);
+            dat.copyPixels(person.bitmapData, person.bitmapData.rect,
+                new flash.geom.Point(x + ((width - person.width) / 2),
+                                     y + (height / 2) - person.height));
+        }
     }
 
     public function tile_render(opts:RenderOpts) : BitmapData {
@@ -99,14 +83,14 @@ class Tile {
     }
 }
 
-class DimetricTile extends Tile {
+class DimetricTile extends TileRenderer {
     public function new() {
                     //  ax  ay  ox   w   h
         super(dimetric, 24, 12,  4, 24, 12);
     }
 }
 
-class IsometricTile extends Tile {
+class IsometricTile extends TileRenderer {
     public function new() {
 
         top_template = [
@@ -177,9 +161,3 @@ class RenderedTilePool {
     }
 
 }
-
-/*class TileGraphic extends Shape {
-    public function new() {
-        super();
-    }
-}*/
