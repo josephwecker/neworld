@@ -34,7 +34,7 @@ def flatten(l, ltypes=(list, tuple)):
     return ltype(l)
 
 sources = ['./', 'src', 'lib']
-setup(dirs=sources, runner='smart_runner')
+setup(dirs=flatten([sources, '.tmp', 'assets']), runner='smart_runner')
 
 #------------------------------------------------------
 

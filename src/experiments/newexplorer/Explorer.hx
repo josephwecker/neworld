@@ -1,7 +1,5 @@
 package experiments.newexplorer;
 
-import assets.Creatures;
-
 import experiments.newexplorer.ViewPort;
 import experiments.newexplorer.world.World;
 import experiments.newexplorer.world.Column;
@@ -12,12 +10,11 @@ import de.polygonal.core.time.Timebase;
 import de.polygonal.core.time.TimebaseEvent;
 
 class Explorer implements IObserver {
-    public var key : Int;
-    var vp : ViewPort;
-    var dir : Int;
-    var world : World;
-    var curr_col : Column;
-    var person : HumanoidSm;
+    public var key :Int;
+    var vp         :ViewPort;
+    var dir        :Int;
+    var world      :World;
+    var curr_col   :Column;
 
     public static function main() {
         haxe.Log.trace = function(v:Dynamic,?i){flash.Lib.trace("Explorer: "+v+"\n");};
@@ -31,8 +28,6 @@ class Explorer implements IObserver {
         D.orientation = D.NORTHEAST;
         curr_col = world.columns[100][100];
         flash.Lib.current.stage.addEventListener(flash.events.KeyboardEvent.KEY_DOWN, rotate);
-        person = new HumanoidSm();
-        flash.Lib.current.addChild(person);
         update(0, null, null);
         //Timebase.attach(this, TimebaseEvent.RENDER);
     }
