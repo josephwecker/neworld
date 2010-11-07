@@ -1,5 +1,7 @@
 package experiments.newexplorer;
 
+import assets.Creatures;
+
 import experiments.newexplorer.ViewPort;
 import experiments.newexplorer.world.World;
 import experiments.newexplorer.world.Column;
