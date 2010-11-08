@@ -4,6 +4,7 @@ import RidgedPerlin;
 import flash.display.BitmapData;
 
 class SampleMap {
+    /*
     static var BASE =        0.002;
     static var GAIN =        1.25;
     static var OFFSET =      0.7;
@@ -12,6 +13,16 @@ class SampleMap {
     static var SEED =        156;
     static var X =           300;
     static var Y =           300;
+    */
+
+    static var BASE =        0.002 / (1 << 10);
+    static var GAIN =        1.0;
+    static var OFFSET =      0.735;
+    static var OCTAVES =     18;
+    static var PERSISTENCE = 0.9;
+    static var SEED =        156;
+    static var X =           390 * (1 << 10);
+    static var Y =           390 * (1 << 10);
 
     var rp : RidgedPerlin;
 
