@@ -12,19 +12,20 @@ Development priorities / proportions:
 * 8-direction orienting
 
 
-----------
-= 5 data types = (Rules for interacting with self and the 4 others)
+------
+=== 7 data types ===
+(Rules for interacting with self and the 6 others)
   Player
-  Enemy
+  Creatures
+  Vegitation
   Effects
   Pickups
   Terrain
   Features
 
+------
 
-----------
-
-Terrain
+=== Terrain ===
   Earth layer
   Water layer
   Vegetation layer
@@ -37,14 +38,32 @@ Terrain
   Plant & animal Erosion
 ------
 
------------
-
 Personality choices / Good/Bad defined by a code of conduct
   Affects how they are trusted by certain creatures / powers
 
--------------
+------
 
+ * Calculated JIT
+ * Precalculated
 
+ * Scales
+   - Continent  [65,536m | 262,144t](1024 | 2^10)
+   - Land(?)    [ 4,096m |  16,384t](  64 | 2^ 6)
+   - ActiveView [    64m |     256t](   1 | 2^ 0)
+   - Viewport   [ ~  32m |     128t](   1 | 2^ 0)
 
+   - World      [?       |         ]
+       * Seasons
+       * Weather
+       * Terrain
+   - Continent
+       * Weather
+       * Terrain
+       * Erosion
+       * Vegitation groups
+       * Creature groups
 
-
+   - (Unknown)
+       * Sea creatures / vegitation
+       * Hurricanes, tsunami
+       * Volcano, earthquake / Tectonics

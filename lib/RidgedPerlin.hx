@@ -72,7 +72,11 @@ class RidgedPerlin {
 	 octFreqPers(falloff);
   }
   
-  public function fill( bitmap:BitmapData, _x:Float, _y:Float, _z:Float, _baseFactor:Float, _gain:Float, _offset:Float ,_clamp:Bool ,?_ ):Void {
+  public function fill( bitmap:BitmapData,
+                        _x :Float, _y :Float, _z     :Float,
+                        _baseFactor   :Float, _gain  :Float,
+                        _offset       :Float, _clamp :Bool,
+                        ?norm_by=0xffff ):Void {
 
     var baseX:Float;
 
@@ -204,25 +208,28 @@ class RidgedPerlin {
 		  
         }
 
-        /*var color = Std.int( ( s * fPersMax ) * 128 );
-     	
-		if( _clamp ) {
-			if (color >= 255 ) color = 255;
-			else if ( color <= 0 ) color = 0;
-		}
-		
-        if(color < 32) bitmap.setPixel( px, py, color * 3 + 32);
-        else if(color > (256 - 32)) bitmap.setPixel( px, py, ((color-32) << 16)
-            + ((color-32) << 8) + (color-32) );
-        else {
-            bitmap.setPixel(px, py, (color << 16));
-        }*/
-        var color = Std.int(s * fPersMax * (0xffff));
-        if(_clamp) {
-            if(color > 0xffff) color = 0xffff;
-            else if(color < 0) color = 0;
+        if(norm_by != 0) {
+            var color = Std.int(s * fPersMax * (norm_by));
+            if(_clamp) {
+                if(color > norm_by) color = norm_by;
+                else if(color < 0) color = 0;
+            }
+            bitmap.setPixel(px, py, color);
+        } else {
+            var color = Std.int( ( s * fPersMax ) * 128 );
+            
+            if( _clamp ) {
+                if (color >= 255 ) color = 255;
+                else if ( color <= 0 ) color = 0;
+            }
+            
+            if(color < 24) bitmap.setPixel( px, py, color * 3 + 24);
+            else if(color > (256 - 32)) bitmap.setPixel( px, py, ((color-32) << 16)
+                + ((color-32) << 8) + (color-32) );
+            else {
+                bitmap.setPixel(px, py, (color << 16));
+            }
         }
-        bitmap.setPixel(px, py, color);
 
         //var color = Std.int((s * fPersMax) * (0xff >> 1));
         //bitmap.setPixel(px, py, (color << 16) + (color << 8) + color);
