@@ -55,6 +55,7 @@ class Simplex {
     }
 
     public function new(?seed=211, ?octaves=3, ?falloff=0.4, ?lacunarity=2.0) {
+        this.lacunarity = lacunarity;
         perm = new flash.Vector(512, true);
         for(i in 0...512) perm[i] = P[i];
         grads = new flash.Vector<flash.Vector<Int>>(8, true);
