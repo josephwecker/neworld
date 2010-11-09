@@ -10,6 +10,9 @@ def build():
 def clean():
     rmdir('swfs')
 
+def faults():
+    haxe('experiments.Faults')
+
 def experiments():
     haxe('experiments.TestShader',           libs=['format'])
     haxe('experiments.TestSimplex')
