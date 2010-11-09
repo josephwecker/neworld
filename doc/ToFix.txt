@@ -1,0 +1,3 @@
+- Resizing destroys the tiles, but they come back on the first screen refresh
+- if it "lags" it remembers all the keys you push in the "pause" and attempts to
+make all those movements, resulting in lack of control.

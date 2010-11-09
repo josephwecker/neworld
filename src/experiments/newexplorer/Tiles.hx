@@ -2,6 +2,7 @@ package experiments.newexplorer;
 
 import assets.creatures.Display;
 import assets.creatures.Sounds;
+import assets.terrain.Display;
 
 import experiments.newexplorer.world.Column;
 import flash.display.BitmapData;
@@ -21,7 +22,7 @@ class TileRenderer {
     public var height    :Int;
     // TODO: skew / drift for dimetric
 
-    var top_template     :Array<Int>;
+    var top_template     :flash.display.Bitmap;
     var top_stamp        :Vector<UInt>;
     var render_pool      :RenderedTilePool;
     var person           :HumanoidSm;
@@ -70,15 +71,18 @@ class TileRenderer {
     }
 
     public function tile_render(opts:RenderOpts) : BitmapData {
-        var top_stamp = new Vector<UInt>(opts.width * opts.height, true);
+        var dat = opts.template.bitmapData;
+        var top_stamp = dat.getVector(dat.rect);
+        
+        //var top_stamp = new Vector<UInt>(opts.width * opts.height, true);
         var i = 0;
-        for(pixel in opts.template) {
+        for(pixel in top_stamp) {
             if(pixel == 0) top_stamp[i] = 0;
             else top_stamp[i] = opts.base_color;
             i += 1;
         }
 
-        var bmd = new BitmapData(opts.width, opts.height, true, 0);
+        var bmd = new BitmapData(dat.width, dat.height, true, 0);
         bmd.setVector(bmd.rect, top_stamp);
         return bmd;
     }
@@ -93,9 +97,9 @@ class DimetricTile extends TileRenderer {
 
 class IsometricTile extends TileRenderer {
     public function new() {
-
-        top_template = [
-            0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        top_template = new IsoTop();
+        //top_template = [
+            /*0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
             0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
             0,0,0,0,0,0,0,0,0,0,0,2,2,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,
             0,0,0,0,0,0,0,0,0,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,
@@ -111,26 +115,7 @@ class IsometricTile extends TileRenderer {
             0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,0,0,0,0,0,
             0,0,0,0,0,1,0,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,0,0,0,0,0,0,0,
             0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,0,0,0,0,0,0,0,0,0,
-            0,0,0,0,0,0,0,0,0,0,1,0,0,1,1,1,1,1,1,1,1,1,0,0,0,1,0,0,0,0,0,0,0,0];
-
-            /*0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,3,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-            0,0,0,0,0,0,0,0,0,0,0,0,0,3,3,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-            0,0,0,0,0,0,0,0,0,0,0,3,3,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,
-            0,0,0,0,0,0,0,0,0,3,3,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,
-            0,0,0,0,0,0,0,3,3,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,
-            0,0,0,0,0,3,3,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,
-            0,0,0,3,3,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,
-            0,3,3,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,
-            3,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-            1,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,
-            1,1,1,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,
-            0,0,1,1,1,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,
-            0,0,0,1,0,1,1,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,
-            0,0,0,0,0,1,1,1,1,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,
-            0,0,0,0,0,1,0,1,0,1,1,2,2,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,
-            0,0,0,0,0,0,0,0,0,0,1,1,1,2,2,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-            0,0,0,0,0,0,0,0,0,0,1,0,0,1,1,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];*/
-
+            0,0,0,0,0,0,0,0,0,0,1,0,0,1,1,1,1,1,1,1,1,1,0,0,0,1,0,0,0,0,0,0,0,0];*/
                      //  ax  ay  ox   w   h
         super(isometric, 34, 9, 17, 34, 18);
     }
@@ -139,7 +124,7 @@ class IsometricTile extends TileRenderer {
 typedef RenderOpts = {
     var key        :String;
     var base_color :UInt;
-    var template   :Array<Int>;
+    var template   :flash.display.Bitmap;
     var width      :UInt;
     var height     :UInt;
     var renderer   :RenderOpts->BitmapData;

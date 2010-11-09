@@ -26,7 +26,7 @@ class Explorer implements IObserver {
         world = new World();
         vp = new ViewPort(world);
         D.orientation = D.NORTHEAST;
-        curr_col = world.columns[100][100];
+        curr_col = world.columns[75][75];
         flash.Lib.current.stage.addEventListener(flash.events.KeyboardEvent.KEY_DOWN, rotate);
 
         rotate(null);
