@@ -1,4 +1,8 @@
-class SimplexNoise {
+package noise;
+
+import flash.display.BitmapData;
+
+class Simplex {
     var grads : flash.Vector<flash.Vector<Int>>;
     static inline var grad3 = [[1,1], [-1,1], [1,-1], [-1,-1],
                                [1,0], [-1,0], [0,1], [0,-1]];
@@ -33,15 +37,14 @@ class SimplexNoise {
         45,127,4,150,254,138,236,205,93,222,114,67,29,24,72,243,141,128,
         195,78,66,215,61,156,180];
     
-    var octaves  :Int;
-    var x_offset :Float;
-    var y_offset :Float;
+    var octaves    :Int;
+    var lacunarity :Float;
+    var x_offset   :Float;
+    var y_offset   :Float;
 
-    var octFreq  :flash.Vector<Float>;
-    var octPers  :flash.Vector<Float>;
-    var persMax  :Float;
-
-    private static var DEFAULT_RIDGED_LACUNARITY:Float = 2.075;
+    var octFreq    :flash.Vector<Float>;
+    var octPers    :flash.Vector<Float>;
+    var persMax    :Float;
  
     static inline function dot(g:flash.Vector<Int>, x:Float, y:Float) {
         return g[0]*x + g[1]*y;
@@ -51,7 +54,7 @@ class SimplexNoise {
         return n > 0 ? Std.int(n) : Std.int(n - 1);
     }
 
-    public function new(?seed=211, ?octaves=3, ?falloff=0.4) {
+    public function new(?seed=211, ?octaves=3, ?falloff=0.4, ?lacunarity=2.0) {
         perm = new flash.Vector(512, true);
         for(i in 0...512) perm[i] = P[i];
         grads = new flash.Vector<flash.Vector<Int>>(8, true);
@@ -73,7 +76,7 @@ class SimplexNoise {
         octPers = new flash.Vector<Float>(octaves, true);
         persMax = 0;
         for(i in 0...octaves) {
-            freq *= DEFAULT_RIDGED_LACUNARITY;
+            freq *= lacunarity;
             pers = Math.pow(persistence, i);
             persMax += pers;
             octFreq[i] = freq;
@@ -82,51 +85,37 @@ class SimplexNoise {
         persMax = 1 / persMax;
     }
 
-    public function noise2D(bitmap:flash.display.BitmapData,
-            ?_x=250.0, ?_y=1300.0, ?scaleFactor=0.001) {
+    public function noise2D(bitmap:BitmapData, ?_x=0.0, ?_y=0.0, ?scaleFactor=0.005) {
         var __y = (_y + y_offset) * scaleFactor;
         var base__x = (_x + x_offset) * scaleFactor;
         var freq;
         var pers;
-        var weight = 1.0;
 
         for(py in 0...bitmap.height) {
             var __x = base__x;
             for(px in 0...bitmap.width) {
                 var val = 0.0;
-                var weight = 1.0;
                 for(oct in 0...octaves) {
                     freq = octFreq[oct];
                     pers = octPers[oct];
                     var noise = noisePoint2D(__x * freq, __y * freq) * pers;
-                    //val += noisePoint2D(__x * freq, __y * freq) * pers;
-                    if(oct > 0) {
-                        noise = Math.abs(noise);
-                        noise = 0.745 - noise;
-                        noise = noise * noise;
-                    }
-                    noise *= weight;
-                    weight = noise * 1.05;
-                    if(weight > 1) weight = 1;
-                    else if(weight < 0) weight = 0;
-                    val += noise * freq;
+                    val += noise_transform(noise, oct, freq, pers);
                 }
                 val = val * persMax;  // Now it's between -1 and 1
-                //var color :Int = Std.int((val+1) * 255) >> 1;
-                var color :Int = Std.int(val * 128);
-                if(color > 255) color = 255;
-                else if(color < 0) color = 0;
-                if(color < 24) bitmap.setPixel( px, py, color * 3 + 24);
-                else if(color > (256 - 32)) bitmap.setPixel( px, py, ((color-32) << 16)
-                    + ((color-32) << 8) + (color-32) );
-                else {
-                    bitmap.setPixel(px, py, (color << 16));
-                }
-                //bitmap.setPixel(px, py, (color << 16) + (color << 8) + (color));
+                record_point(bitmap, val, px, py);
                 __x += scaleFactor;
             }
             __y += scaleFactor;
         }
+    }
+
+    // Override this to do a transformation on the noise
+    inline function noise_transform(noise, oct, freq, pers) {return noise;}
+
+    // Override this to do a transformation on the final output
+    inline function record_point(bitmap:BitmapData, noise:Float, px:Int, py:Int) {
+        var color :Int = Std.int((noise+1) * 255) >> 1;
+        bitmap.setPixel(px, py, (color << 16) + (color << 8) + (color));
     }
 
     static inline var F2 = 0.366025403784439; //0.5 * (Math.sqrt(3.0)-1.0);

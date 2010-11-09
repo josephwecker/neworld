@@ -1,5 +1,5 @@
 package experiments;
-import Simplex;
+import noise.Simplex;
 import haxe.Timer;
 
 class TestSimplex {
@@ -18,7 +18,7 @@ class TestSimplex {
         var seed = 123;
         var bmd = new flash.display.BitmapData(500,500);
 
-        var noise = new SimplexNoise(seed, 18, 0.93);
+        var noise = new Simplex(seed, 18, 0.93, 2.0);
         noise.noise2D(bmd);
         //var noise = new OptimizedPerlin(seed, 20, 0.7);
         //noise.fill(bmd);
