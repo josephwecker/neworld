@@ -1,10 +1,8 @@
 class SimplexNoise {
-    //var grads : Array<Array<Int>>;
     var grads : flash.Vector<flash.Vector<Int>>;
     static inline var grad3 = [[1,1], [-1,1], [1,-1], [-1,-1],
                                [1,0], [-1,0], [0,1], [0,-1]];
 
-    //var perm : Array<Int>;
     var perm : flash.Vector<Int>;
     static inline var P = [
         151,160,137,91,90,15,131,13,201,95,96,53,194,233,7,225,140,36,103,30,69,
@@ -36,14 +34,14 @@ class SimplexNoise {
         195,78,66,215,61,156,180];
     
     var octaves  :Int;
-    var iXOffset :Float;
-    var iYOffset :Float;
+    var x_offset :Float;
+    var y_offset :Float;
 
     var octFreq  :flash.Vector<Float>;
     var octPers  :flash.Vector<Float>;
     var persMax  :Float;
 
-    private static var DEFAULT_RIDGED_LACUNARITY:Float = 2.0;
+    private static var DEFAULT_RIDGED_LACUNARITY:Float = 2.075;
  
     static inline function dot(g:flash.Vector<Int>, x:Float, y:Float) {
         return g[0]*x + g[1]*y;
@@ -53,33 +51,24 @@ class SimplexNoise {
         return n > 0 ? Std.int(n) : Std.int(n - 1);
     }
 
-    static inline function fastAbs(n:Float):Float {
-        if(n<0) return -n;
-        else return n;
-    }
-
     public function new(?seed=211, ?octaves=3, ?falloff=0.4) {
         perm = new flash.Vector(512, true);
         for(i in 0...512) perm[i] = P[i];
-        //perm = P;
         grads = new flash.Vector<flash.Vector<Int>>(8, true);
         for(i in 0...8) {
             grads[i] = new flash.Vector<Int>(2, true);
             grads[i][0] = grad3[i][0];
             grads[i][1] = grad3[i][1];
         }
-        //grads = grad3;
         this.octaves = octaves;
-        iXOffset = seed = Std.int((seed * 16807.0) % 2147483647);
-        iYOffset =        Std.int((seed * 16807.0) % 2147483647);
+        x_offset = seed = Std.int((seed * 16807.0) % 2147483647);
+        y_offset =        Std.int((seed * 16807.0) % 2147483647);
         octFreqPers(falloff);
     }
 
     function octFreqPers(persistence) {
         var freq = 1.0;
         var pers;
-        //octFreq = new Array<Float>();
-        //octPers = new Array<Float>();
         octFreq = new flash.Vector<Float>(octaves, true);
         octPers = new flash.Vector<Float>(octaves, true);
         persMax = 0;
@@ -87,34 +76,53 @@ class SimplexNoise {
             freq *= DEFAULT_RIDGED_LACUNARITY;
             pers = Math.pow(persistence, i);
             persMax += pers;
-            //octFreq.push(freq);
-            //octPers.push(pers);
             octFreq[i] = freq;
             octPers[i] = pers;
         }
         persMax = 1 / persMax;
     }
 
-    public function noise2D(bitmap:flash.display.BitmapData, ?_x=0.0, ?_y=0.0, scaleFactor=0.005) {
-        //var octFreq = octFreq;
-        //var octPers = octPers;
-        var __y = (_y + iYOffset) * scaleFactor;
-        var base__x = (_x + iXOffset) * scaleFactor;
+    public function noise2D(bitmap:flash.display.BitmapData,
+            ?_x=250.0, ?_y=1300.0, ?scaleFactor=0.001) {
+        var __y = (_y + y_offset) * scaleFactor;
+        var base__x = (_x + x_offset) * scaleFactor;
         var freq;
         var pers;
+        var weight = 1.0;
 
         for(py in 0...bitmap.height) {
             var __x = base__x;
             for(px in 0...bitmap.width) {
                 var val = 0.0;
+                var weight = 1.0;
                 for(oct in 0...octaves) {
                     freq = octFreq[oct];
                     pers = octPers[oct];
-                    val += noisePoint2D(__x * freq, __y * freq) * pers;
+                    var noise = noisePoint2D(__x * freq, __y * freq) * pers;
+                    //val += noisePoint2D(__x * freq, __y * freq) * pers;
+                    if(oct > 0) {
+                        noise = Math.abs(noise);
+                        noise = 0.745 - noise;
+                        noise = noise * noise;
+                    }
+                    noise *= weight;
+                    weight = noise * 1.05;
+                    if(weight > 1) weight = 1;
+                    else if(weight < 0) weight = 0;
+                    val += noise * freq;
                 }
                 val = val * persMax;  // Now it's between -1 and 1
-                var color :Int = Std.int((val+1) * 255) >> 1;
-                bitmap.setPixel(px, py, (color << 16) + (color << 8) + (color));
+                //var color :Int = Std.int((val+1) * 255) >> 1;
+                var color :Int = Std.int(val * 128);
+                if(color > 255) color = 255;
+                else if(color < 0) color = 0;
+                if(color < 24) bitmap.setPixel( px, py, color * 3 + 24);
+                else if(color > (256 - 32)) bitmap.setPixel( px, py, ((color-32) << 16)
+                    + ((color-32) << 8) + (color-32) );
+                else {
+                    bitmap.setPixel(px, py, (color << 16));
+                }
+                //bitmap.setPixel(px, py, (color << 16) + (color << 8) + (color));
                 __x += scaleFactor;
             }
             __y += scaleFactor;

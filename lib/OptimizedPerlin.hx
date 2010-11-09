@@ -95,11 +95,22 @@ class OptimizedPerlin {
                 }
 
                 //var r = (Std.int((s * fPersMax + 1) * 128 * 0.8)) << 16;
-                var r = 0;
-                var g = Std.int((s2* fPersMax + 1) * 128) << 8;
+
+                s2 = s2 * fPersMax;  // Now it's between -1 and 1
+                var color :Int = Std.int((s2+1) * 255) >> 1;
+                bitmap.setPixel(px, py, (color << 16) + (color << 8) + (color));
+
+                //var r = 0;
+                //var g = Std.int((s2* fPersMax + 1) * 128) << 8;
+                // ^^^^^
+                
                 //var b = (Std.int((s3* fPersMax + 1) * 128) >> 2);
-                var b = 0;
-                var a =  (g & 0xF000) << 16;  // Good stepped
+
+
+                //var b = 0;
+                //var a =  (g & 0xF000) << 16;  // Good stepped
+                // ^^^^^
+                
                 //var a =  ((g & 0xF000) << 1) << 16;  // Good two-tone
                 //var a = g < 0x7400 ? 0 : g << 16;  // Cutoff
 
@@ -107,7 +118,8 @@ class OptimizedPerlin {
                 //var a = (g & 0x88000000);
                 //var a = 0xff000000;
 
-                bitmap.setPixel32(px, py, a | r | g | b);
+                //bitmap.setPixel32(px, py, a | r | g | b);
+                // ^^^^^
 
                 //bitmap.setPixel32( px, py, 0xff000000 | color << 16 | color << 8 | color );
                 //bitmap.setPixel32( px, py, 0xff000000 | color << 8);

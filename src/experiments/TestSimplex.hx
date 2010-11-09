@@ -14,10 +14,11 @@ class TestSimplex {
         flash.Lib.current.stage.align =     flash.display.StageAlign.TOP_LEFT;
         trace("start\n");
         var time = Timer.stamp();
-        var seed = Math.floor(Math.random() * 1000);
+        //var seed = Math.floor(Math.random() * 1000);
+        var seed = 123;
         var bmd = new flash.display.BitmapData(500,500);
 
-        var noise = new SimplexNoise(seed, 20, 0.7);
+        var noise = new SimplexNoise(seed, 18, 0.93);
         noise.noise2D(bmd);
         //var noise = new OptimizedPerlin(seed, 20, 0.7);
         //noise.fill(bmd);
