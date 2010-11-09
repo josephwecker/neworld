@@ -64,7 +64,7 @@ class OptimizedPerlin {
         octFreqPers(falloff);
     }
 
-    public function fill( bitmap:BitmapData, _x:Float, _y:Float, _z:Float, ?_ ):Void {
+    public function fill( bitmap:BitmapData, ?_x:Float=0, ?_y:Float=0, ?_z:Float=0, ?_ ):Void {
 
         var baseX:Float;
 
