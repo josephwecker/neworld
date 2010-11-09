@@ -1,0 +1,18 @@
+Graphics < Simulation < GamePlay
+
+1. Explorer
+   - World
+   - Basic Rendering
+   - Movement and movement limitations
+   - Pathfinding
+   - Mapping / memory
+   - Main Terrain tranformations
+
+2. Ecosystem 1
+   - Weather
+   - Vegitation
+
+3. Ecosystem 2
+   - Creatures simulation
+
+...
