@@ -1,4 +1,6 @@
-﻿/**
+﻿package noise;
+
+/**
 Title:      Ridged Perlin noise
 Version:    1.0
 Author:     Einar Öberg

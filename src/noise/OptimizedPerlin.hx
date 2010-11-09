@@ -1,3 +1,5 @@
+package noise;
+
 /**
 Title:         Perlin noise
 Version:       1.3

@@ -5,7 +5,7 @@ import flash.display.Bitmap;
 import flash.geom.Rectangle;
 import flash.geom.Point;
 import flash.geom.Matrix;
-import RidgedPerlin;
+import noise.RidgedPerlin;
 //import haxe.Resource;
 //import flash.display.Shader;
 //import flash.filters.ShaderFilter;
