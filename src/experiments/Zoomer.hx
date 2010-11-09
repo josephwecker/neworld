@@ -4,7 +4,7 @@ import flash.display.Bitmap;
 import flash.geom.Rectangle;
 import flash.geom.Point;
 import flash.geom.Matrix;
-import RidgedPerlin;
+import noise.RidgedPerlin;
 import de.polygonal.core.event.IObserver;
 import de.polygonal.core.event.Observable;
 import de.polygonal.core.time.Timebase;

@@ -23,3 +23,7 @@ Ideas:
   * Ridged Perlin
   * Fault-line
   * Recursive erosion (see near bottom of http://www.nullpointer.co.uk/content/?p=74 )
+
+
+ThermalErosion((Simplex() * FaultLine()) + (Simplex2() * RidgedPerlin()))
+

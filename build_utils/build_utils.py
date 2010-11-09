@@ -33,7 +33,7 @@ def flatten(l, ltypes=(list, tuple)):
         i += 1
     return ltype(l)
 
-sources = ['./', 'src', 'lib']
+sources = ['./', 'src']
 setup(dirs=flatten([sources, '.tmp', 'assets']), runner='smart_runner')
 
 #------------------------------------------------------

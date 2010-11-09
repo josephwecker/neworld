@@ -4,13 +4,13 @@ class Experiment extends flash.display.Sprite {
     var noisy : flash.display.BitmapData;
     var title : flash.text.TextField;
     var frmnum : Int;
-    var perl : OptimizedPerlin;
+    var perl : noise.OptimizedPerlin;
 
     public function new() {
         super();
         flash.Lib.current.addChild(this);
         noisy = new flash.display.BitmapData(100, 100, true, 0x00FF00);
-        perl = new OptimizedPerlin(123, 5, 0.55);
+        perl = new noise.OptimizedPerlin(123, 5, 0.55);
         //perl.fill(noisy, 0, 0, 0);
         addChild(new flash.display.Bitmap(noisy));
         frmnum = 0;

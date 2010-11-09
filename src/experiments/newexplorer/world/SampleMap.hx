@@ -1,6 +1,6 @@
 package experiments.newexplorer.world;
 
-import RidgedPerlin;
+import noise.RidgedPerlin;
 import flash.display.BitmapData;
 
 class SampleMap {

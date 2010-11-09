@@ -1,6 +1,6 @@
 package experiments.explorer;
 
-import RidgedPerlin;
+import noise.RidgedPerlin;
 import flash.display.BitmapData;
 import neworld.Utils;
 //using  Utils;
