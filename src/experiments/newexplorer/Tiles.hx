@@ -23,7 +23,11 @@ class TileRenderer {
     // TODO: skew / drift for dimetric
 
     var top_template     :flash.display.Bitmap;
+    var mid_template     :flash.display.Bitmap;
+    var rep_template     :flash.display.Bitmap;
     var top_stamp        :Vector<UInt>;
+    var mid_stamp        :Vector<UInt>;
+    var rep_stamp        :Vector<UInt>;
     var render_pool      :RenderedTilePool;
     var person           :HumanoidSm;
 
@@ -55,10 +59,14 @@ class TileRenderer {
         var attribs :RenderOpts = {
             key:        'iso' + base_color,
             base_color: base_color,
-            template:   top_template,
+            top_template:   top_template,
+            mid_template:   mid_template,
+            rep_template:   rep_template,
             width:      width,
             height:     height,
-            renderer:   this.tile_render};
+            top_renderer:   this.tile_render_top,
+            mid_renderer:   this.tile_render_mid,
+            rep_renderer:   this.tile_render_rep};
 
         var bmd = render_pool.get_rendered(attribs);
         dat.copyPixels(bmd, bmd.rect, new flash.geom.Point(x,y));
@@ -66,24 +74,58 @@ class TileRenderer {
             //var p = cast(person, Bitmap);
             dat.copyPixels(person.bitmapData, person.bitmapData.rect,
                 new flash.geom.Point(x + ((width - person.width) / 2),
-                                     y + (height / 2) - person.height));
+                                     y + (height / 2) - person.height +4));
         }
     }
 
-    public function tile_render(opts:RenderOpts) : BitmapData {
-        var dat = opts.template.bitmapData;
-        var top_stamp = dat.getVector(dat.rect);
+    public function tile_render_top(opts:RenderOpts) : BitmapData {
+        var dat = opts.top_template.bitmapData;
+        var stamp = dat.getVector(dat.rect);
         
         //var top_stamp = new Vector<UInt>(opts.width * opts.height, true);
         var i = 0;
-        for(pixel in top_stamp) {
-            if(pixel == 0) top_stamp[i] = 0;
-            else top_stamp[i] = opts.base_color;
+        for(pixel in stamp) {
+            if(pixel == 0) stamp[i] = 0;
+            else if(pixel==230) stamp[i] = opts.base_color;
             i += 1;
         }
-
+        
         var bmd = new BitmapData(dat.width, dat.height, true, 0);
-        bmd.setVector(bmd.rect, top_stamp);
+        bmd.setVector(bmd.rect, stamp);
+        return bmd;
+    }
+
+    public function tile_render_mid(opts:RenderOpts) : BitmapData {
+        var dat = opts.mid_template.bitmapData;
+        var stamp = dat.getVector(dat.rect);
+        
+        //var top_stamp = new Vector<UInt>(opts.width * opts.height, true);
+        var i = 0;
+        for(pixel in stamp) {
+            if(pixel == 0) stamp[i] = 0;
+            else if(pixel==230) stamp[i] = opts.base_color;
+            i += 1;
+        }
+        
+        var bmd = new BitmapData(dat.width, dat.height, true, 0);
+        bmd.setVector(bmd.rect, stamp);
+        return bmd;
+    }
+
+    public function tile_render_rep(opts:RenderOpts) : BitmapData {
+        var dat = opts.rep_template.bitmapData;
+        var stamp = dat.getVector(dat.rect);
+        
+        //var top_stamp = new Vector<UInt>(opts.width * opts.height, true);
+        var i = 0;
+        for(pixel in stamp) {
+            if(pixel == 0) stamp[i] = 0;
+            else if(pixel==230) stamp[i] = opts.base_color;
+            i += 1;
+        }
+        
+        var bmd = new BitmapData(dat.width, dat.height, true, 0);
+        bmd.setVector(bmd.rect, stamp);
         return bmd;
     }
 }
@@ -98,6 +140,8 @@ class DimetricTile extends TileRenderer {
 class IsometricTile extends TileRenderer {
     public function new() {
         top_template = new IsoTop();
+        mid_template = new IsoMid();
+        rep_template = new IsoRep();
         //top_template = [
             /*0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
             0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -124,10 +168,14 @@ class IsometricTile extends TileRenderer {
 typedef RenderOpts = {
     var key        :String;
     var base_color :UInt;
-    var template   :flash.display.Bitmap;
+    var top_template   :flash.display.Bitmap;
+    var mid_template   :flash.display.Bitmap;
+    var rep_template   :flash.display.Bitmap;
     var width      :UInt;
     var height     :UInt;
-    var renderer   :RenderOpts->BitmapData;
+    var top_renderer   :RenderOpts->BitmapData;
+    var mid_renderer   :RenderOpts->BitmapData;
+    var rep_renderer   :RenderOpts->BitmapData;
 }
 
 class RenderedTilePool {
@@ -140,7 +188,15 @@ class RenderedTilePool {
         var key = opts.key;
         if(rendered.exists(key)) return rendered.get(key);
         else {
-            var bmd = opts.renderer(opts);
+            var tbmd = opts.top_renderer(opts);
+            var mbmd = opts.mid_renderer(opts);
+            var rbmd = opts.rep_renderer(opts);
+            var bmd = new BitmapData(34,100,true,0x000000);
+            for( i in 17...bmd.height ) {
+                bmd.copyPixels(rbmd, rbmd.rect, new flash.geom.Point(0,i));
+            }
+            bmd.copyPixels(mbmd, mbmd.rect, new flash.geom.Point(0,0));
+            bmd.copyPixels(tbmd, tbmd.rect, new flash.geom.Point(0,0),null,null,true);
             rendered.set(key, bmd);
             return bmd;
         }
