@@ -14,6 +14,9 @@ def clean():
 def faults():
     haxe('experiments.Faults')
 
+def tools():
+    haxe('experiments.tools.TileViewer')
+
 def experiments():
     haxe('experiments.TestShader',           libs=['format'])
     haxe('experiments.TestSimplex')

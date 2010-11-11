@@ -57,7 +57,7 @@ class ViewPort extends flash.display.Sprite { // For events
     var sounds_frogs:Frogs;
     var sfchan      :flash.media.SoundChannel;
 
-    public function new(world : World) {
+    public function new(world : World, ?width : Int, ?height : Int) {
         super();
         this.world = world;
         isotile = new IsometricTile();
