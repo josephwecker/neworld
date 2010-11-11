@@ -41,6 +41,11 @@ Development priorities / proportions:
 Personality choices / Good/Bad defined by a code of conduct
   Affects how they are trusted by certain creatures / powers
 
+MAGIC
+  Big source is character's "link" with other creatures, plants, animals, and
+energies- but particularly creatures.  Link has to be developed- has to come
+from their desire to share it (or coercion?)
+
 ------
 
  * Calculated JIT
