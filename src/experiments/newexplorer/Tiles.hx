@@ -57,7 +57,7 @@ class TileRenderer {
         for(neighbor_num in 0...8) {
             var neighbor = col.n[D.rel(neighbor_num)];
             norm_hdiff = real_col_height(neighbor.total_height) - this_height;
-            key += norm_hdiff == 9 ? '1' : '0';
+            key += norm_hdiff >= 9 ? '1' : '0';
         }
 
         var attribs :RenderOpts = {
@@ -143,7 +143,7 @@ class IsometricTile extends TileRenderer {
             var neighbor = opts.column.n[D.rel(neighbor_num)];
             var norm_hdiff = real_col_height(neighbor.total_height) -
                              real_col_height(opts.column.total_height);
-            highers[neighbor_num & 7] = norm_hdiff == 9;
+            highers[neighbor_num & 7] = norm_hdiff >= 9;
         }
         highers[D.LEFT]  = highers[D.UPLEFT]    || highers[D.LEFT]  || highers[D.DOWNLEFT];
         highers[D.UP]    = highers[D.UPLEFT]    || highers[D.UP]    || highers[D.UPRIGHT];
@@ -181,6 +181,15 @@ class IsometricTile extends TileRenderer {
             template.graphics.lineTo(34.0, 8.5);
             template.graphics.lineTo(34.0, 17.5);
             template.graphics.lineTo(17.0, 26.0);
+            template.graphics.endFill();
+        }
+
+        if(highers[D.DOWN]) {
+            template.graphics.beginFill(shade_flat);
+            template.graphics.moveTo(center[0],center[1]);
+            template.graphics.lineTo(8.5, 21.75);
+            template.graphics.lineTo(17.0, 26.0);
+            template.graphics.lineTo(25.5, 21.7);
             template.graphics.endFill();
         }
 
