@@ -134,7 +134,7 @@ class ViewPort extends flash.display.Sprite { // For events
         // Find top-left corner - start_vpx, start_vpy & column
         var vp_center_x :Int = portal_width  >> 1;
         var vp_center_y :Int = portal_height >> 1;
-        var up_tiles    :Int = Math.floor(vp_center_y / tile.height) + 2;
+        var up_tiles    :Int = Math.floor(vp_center_y / tile.height) + 10;
         var over_tiles  :Int = Math.floor(vp_center_x / tile.width) + 2;
         // TODO: long/lat offset added to these offsets, depending on orientation
         var vx          :Int = vp_center_x - (over_tiles * tile.width) - (tile.width >> 1);
@@ -144,7 +144,7 @@ class ViewPort extends flash.display.Sprite { // For events
 
         var curr_col = mid_col.move_by(D.UP, up_tiles);
         curr_col = curr_col.move_by(D.LEFT, over_tiles);
-        while(vy < portal_height) {
+        while(vy < (portal_height + (tile.height * 10))) {
             var leftmost_col = curr_col;
             var leftmost_vx  = vx;
             while(vx < portal_width) {
