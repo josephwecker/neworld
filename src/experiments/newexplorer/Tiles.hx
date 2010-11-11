@@ -145,9 +145,33 @@ class DimetricTile extends TileRenderer {
 
 class IsometricTile extends TileRenderer {
     public function new() {
-        top_template = new IsoTop();
+        var template:flash.display.MovieClip = new flash.display.MovieClip();
+        var center=[17.0,8.5];
+        var default_nodes:Array<Array<Float>> =
+            [[0.0,8.5],[8.5,12.75],[17.0,17.0],[25.5,12.75],[34.0,8.5],[25.5,4.25],[17.0,0],[8.5,4.25]];
+        var polygons:Array<Array<Int>> =
+            [[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,0]];
+        var bmd = new BitmapData(34,17,true,0x000000);
+        //var trans:flash.geom.Matrix = new flash.geom.Matrix();
+        
+        for( poly in 0...8 ) {
+            template.graphics.beginFill(0x990000);
+            template.graphics.moveTo(center[0],center[1]);
+            var node_1 = polygons[poly][0];
+            var node_2 = polygons[poly][1];
+            template.graphics.lineTo(default_nodes[node_1][0],default_nodes[node_1][1]);
+            template.graphics.lineTo(default_nodes[node_2][0],default_nodes[node_2][1]);
+            template.graphics.endFill();
+          //  trans.tx = 
+            bmd.draw(template);
+        }
+            
+
+        //top_template = new IsoTop();
+        top_template = new flash.display.Bitmap(bmd);
         mid_template = new IsoMid();
         rep_template = new IsoRep();
+
                     //  ax  ay  ox   w   h
         super(isometric, 34, 9, 17, 34, 18);
     }
