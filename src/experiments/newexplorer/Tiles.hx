@@ -5,6 +5,7 @@ import assets.creatures.Sounds;
 import assets.terrain.Display;
 
 import experiments.newexplorer.world.Column;
+import experiments.newexplorer.ViewPort;
 import flash.display.BitmapData;
 import flash.Vector;
 
@@ -22,12 +23,8 @@ class TileRenderer {
     public var height    :Int;
     // TODO: skew / drift for dimetric
 
-    var top_template     :flash.display.Bitmap;
     var mid_template     :flash.display.Bitmap;
     var rep_template     :flash.display.Bitmap;
-    var top_stamp        :Vector<UInt>;
-    var mid_stamp        :Vector<UInt>;
-    var rep_stamp        :Vector<UInt>;
     var render_pool      :RenderedTilePool;
     var person           :HumanoidSm;
 
@@ -42,67 +39,55 @@ class TileRenderer {
         person = new HumanoidSm();
     }
 
+    inline function real_col_height(in_height :Int) {
+        return Std.int(in_height / 0xffff * 512 / 9) * 9;
+    }
+
     public function render(col :Column, dat :BitmapData, x :Int, y :Int, ref_height :Int, ?hi=false) {
-        if(top_template == null) return;
-        //var this_height  = (Std.int(col.total_height / 0xffff * 512) >> 3) << 3;
-        //var other_height = (Std.int(ref_height / 0xffff * 512) >> 3) << 3;
-        var this_height  = Std.int(col.total_height / 0xffff * 512 / 9) * 9;
-        var other_height = Std.int(ref_height / 0xffff * 512 / 9) * 9;
+        var this_height  = real_col_height(col.total_height);
+        var other_height = real_col_height(ref_height);
         var norm_hdiff = this_height - other_height;
         y = y - norm_hdiff;
 
-        var base_color = 2 * Math.floor(col.total_height / 0xffff * 64);
-        if(hi) {
-            base_color = 0xFF000000 +
-                (base_color<<16)+((base_color>>1)<<8)+(base_color>>1);
-        } else {
-            base_color = 0xFF000000 +
-                ((base_color>>1)<<16)+(base_color<<8)+(base_color>>1);
+        // Base color (will be replaced with shaders etc. at some point)
+        var c = 2 * Math.floor(col.total_height / 0xffff * 64);
+        var color = hi ? 0xFF000000+(c<<16)+((c>>1)<<8)+(c>>1) : 0xFF000000+((c>>1)<<16)+(c<<8)+(c>>1);
+
+        var key = 'iso' + color;
+        for(neighbor_num in 0...8) {
+            var neighbor = col.n[D.rel(neighbor_num)];
+            norm_hdiff = real_col_height(neighbor.total_height) - this_height;
+            key += norm_hdiff == 9 ? '1' : '0';
         }
+
         var attribs :RenderOpts = {
-            key:        'iso' + base_color,
-            base_color: base_color,
-            top_template:   top_template,
+            key:            key,
+            base_color:     color,
             mid_template:   mid_template,
             rep_template:   rep_template,
-            width:      width,
-            height:     height,
+            width:          width,
+            height:         height,
             top_renderer:   this.tile_render_top,
             mid_renderer:   this.tile_render_mid,
-            rep_renderer:   this.tile_render_rep};
+            rep_renderer:   this.tile_render_rep,
+            column:         col
+            };
 
         var bmd = render_pool.get_rendered(attribs);
-        dat.copyPixels(bmd, bmd.rect, new flash.geom.Point(x,y));
+        dat.copyPixels(bmd, bmd.rect, new flash.geom.Point(x,y - 9));
         if(hi) {
-            //var p = cast(person, Bitmap);
             dat.copyPixels(person.bitmapData, person.bitmapData.rect,
                 new flash.geom.Point(x + ((width - person.width) / 2),
                                      y + (height / 2) - person.height +4));
         }
     }
 
-    public function tile_render_top(opts:RenderOpts) : BitmapData {
-        var dat = opts.top_template.bitmapData;
-        var stamp = dat.getVector(dat.rect);
-        
-        //var top_stamp = new Vector<UInt>(opts.width * opts.height, true);
-        var i = 0;
-        for(pixel in stamp) {
-            if(pixel == 0) stamp[i] = 0;
-            else if(pixel==4278218020) stamp[i] = opts.base_color;
-            i += 1;
-        }
-        
-        var bmd = new BitmapData(dat.width, dat.height, true, 0);
-        bmd.setVector(bmd.rect, stamp);
-        return bmd;
-    }
+    public function tile_render_top(opts:RenderOpts) : BitmapData {return null;}
 
     public function tile_render_mid(opts:RenderOpts) : BitmapData {
         var dat = opts.mid_template.bitmapData;
         var stamp = dat.getVector(dat.rect);
         
-        //var top_stamp = new Vector<UInt>(opts.width * opts.height, true);
         var i = 0;
         for(pixel in stamp) {
             if(pixel == 0) stamp[i] = 0;
@@ -119,7 +104,6 @@ class TileRenderer {
         var dat = opts.rep_template.bitmapData;
         var stamp = dat.getVector(dat.rect);
         
-        //var top_stamp = new Vector<UInt>(opts.width * opts.height, true);
         var i = 0;
         for(pixel in stamp) {
             if(pixel == 0) stamp[i] = 0;
@@ -135,7 +119,6 @@ class TileRenderer {
 
 class DimetricTile extends TileRenderer {
     public function new() {
-        top_template = new DimTop();
         mid_template = new DimMid();
         rep_template = new DimRep();
                      //  ax  ay  ox   w   h
@@ -145,49 +128,88 @@ class DimetricTile extends TileRenderer {
 
 class IsometricTile extends TileRenderer {
     public function new() {
-        var template:flash.display.MovieClip = new flash.display.MovieClip();
-        var center=[17.0,8.5];
-        var default_nodes:Array<Array<Float>> =
-            [[0.0,8.5],[8.5,12.75],[17.0,17.0],[25.5,12.75],[34.0,8.5],[25.5,4.25],[17.0,0],[8.5,4.25]];
-        var polygons:Array<Array<Int>> =
-            [[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,0]];
-        var bmd = new BitmapData(34,17,true,0x000000);
-        //var trans:flash.geom.Matrix = new flash.geom.Matrix();
-        
-        for( poly in 0...8 ) {
-            template.graphics.beginFill(0x990000);
-            template.graphics.moveTo(center[0],center[1]);
-            var node_1 = polygons[poly][0];
-            var node_2 = polygons[poly][1];
-            template.graphics.lineTo(default_nodes[node_1][0],default_nodes[node_1][1]);
-            template.graphics.lineTo(default_nodes[node_2][0],default_nodes[node_2][1]);
-            template.graphics.endFill();
-          //  trans.tx = 
-            bmd.draw(template);
-        }
-            
-
-        //top_template = new IsoTop();
-        top_template = new flash.display.Bitmap(bmd);
         mid_template = new IsoMid();
         rep_template = new IsoRep();
-
                     //  ax  ay  ox   w   h
         super(isometric, 34, 9, 17, 34, 18);
+    }
+
+    public override function tile_render_top(opts :RenderOpts) :BitmapData {
+        var template = new flash.display.Shape();
+        var center = [17.0, 17.5];
+
+        var highers = new Array<Bool>();
+        for(neighbor_num in D.LEFT...(D.LEFT+8)) {
+            var neighbor = opts.column.n[D.rel(neighbor_num)];
+            var norm_hdiff = real_col_height(neighbor.total_height) -
+                             real_col_height(opts.column.total_height);
+            highers[neighbor_num & 7] = norm_hdiff == 9;
+        }
+        highers[D.LEFT]  = highers[D.UPLEFT]    || highers[D.LEFT]  || highers[D.DOWNLEFT];
+        highers[D.UP]    = highers[D.UPLEFT]    || highers[D.UP]    || highers[D.UPRIGHT];
+        highers[D.RIGHT] = highers[D.UPRIGHT]   || highers[D.RIGHT] || highers[D.DOWNRIGHT];
+        highers[D.DOWN]  = highers[D.DOWNRIGHT] || highers[D.DOWN]  || highers[D.DOWNLEFT];
+
+        var shade_flat = opts.base_color;
+        var shade_highlight = opts.base_color - 0x002200;
+        var shade_shadow = opts.base_color + 0x002200;
+
+        var vertices = new Array<Array<Float>>();
+        vertices[D.LEFT]      = [ 0.0, 17.5  - (highers[D.LEFT]      ? 9.0 : 0.0)];
+        vertices[D.UPLEFT]    = [ 8.5, 13.25 - (highers[D.UPLEFT]    ? 9.0 : 0.0)];
+        vertices[D.UP]        = [17.0,  9.0  - (highers[D.UP]        ? 9.0 : 0.0)];
+        vertices[D.UPRIGHT]   = [25.5, 13.25 - (highers[D.UPRIGHT]   ? 9.0 : 0.0)];
+        vertices[D.RIGHT]     = [34.0, 17.5  - (highers[D.RIGHT]     ? 9.0 : 0.0)];
+        vertices[D.DOWNRIGHT] = [25.5, 21.75 - (highers[D.DOWNRIGHT] ? 9.0 : 0.0)];
+        vertices[D.DOWN]      = [17.0, 26.0  - (highers[D.DOWN]      ? 9.0 : 0.0)];
+        vertices[D.DOWNLEFT]  = [ 8.5, 21.75 - (highers[D.DOWNLEFT]  ? 9.0 : 0.0)];
+
+        var bmd = new BitmapData(34,26,true,0x000000);
+
+        // Fill the small triangles
+        if(highers[D.LEFT]) {
+            template.graphics.beginFill(shade_shadow);
+            template.graphics.moveTo(center[0],center[1]);
+            template.graphics.lineTo(0.0, 8.5);
+            template.graphics.lineTo(0.0, 17.5);
+            template.graphics.lineTo(17.0, 26.0);
+            template.graphics.endFill();
+        }
+        if(highers[D.RIGHT]) {
+            template.graphics.beginFill(shade_highlight);
+            template.graphics.moveTo(center[0],center[1]);
+            template.graphics.lineTo(34.0, 8.5);
+            template.graphics.lineTo(34.0, 17.5);
+            template.graphics.lineTo(17.0, 26.0);
+            template.graphics.endFill();
+        }
+
+        for( poly in D.LEFT...(D.LEFT+8)) {
+            template.graphics.beginFill(opts.base_color);
+            template.graphics.moveTo(center[0],center[1]);
+            var node_1 = poly & 7;
+            var node_2 = (poly + 1) & 7;
+            template.graphics.lineTo(vertices[node_1][0], vertices[node_1][1]);
+            template.graphics.lineTo(vertices[node_2][0], vertices[node_2][1]);
+            template.graphics.endFill();
+        }
+        bmd.draw(template);
+        return bmd;
+        //top_template = new flash.display.Bitmap(bmd);
     }
 }
 
 typedef RenderOpts = {
-    var key        :String;
-    var base_color :UInt;
-    var top_template   :flash.display.Bitmap;
+    var key            :String;
+    var base_color     :UInt;
     var mid_template   :flash.display.Bitmap;
     var rep_template   :flash.display.Bitmap;
-    var width      :UInt;
-    var height     :UInt;
+    var width          :UInt;
+    var height         :UInt;
     var top_renderer   :RenderOpts->BitmapData;
     var mid_renderer   :RenderOpts->BitmapData;
     var rep_renderer   :RenderOpts->BitmapData;
+    var column         :Column;
 }
 
 class RenderedTilePool {
@@ -203,11 +225,11 @@ class RenderedTilePool {
             var tbmd = opts.top_renderer(opts);
             var mbmd = opts.mid_renderer(opts);
             var rbmd = opts.rep_renderer(opts);
-            var bmd = new BitmapData(34,100,true,0x000000);
-            for( i in 17...bmd.height ) {
+            var bmd = new BitmapData(34,109,true,0x000000);
+            for( i in 26...bmd.height ) {
                 bmd.copyPixels(rbmd, rbmd.rect, new flash.geom.Point(0,i));
             }
-            bmd.copyPixels(mbmd, mbmd.rect, new flash.geom.Point(0,0));
+            bmd.copyPixels(mbmd, mbmd.rect, new flash.geom.Point(0,9));
             bmd.copyPixels(tbmd, tbmd.rect, new flash.geom.Point(0,0),null,null,true);
             rendered.set(key, bmd);
             return bmd;
