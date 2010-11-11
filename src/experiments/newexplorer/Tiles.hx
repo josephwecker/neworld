@@ -132,7 +132,10 @@ class TileRenderer {
 
 class DimetricTile extends TileRenderer {
     public function new() {
-                    //  ax  ay  ox   w   h
+        top_template = new DimTop();
+        mid_template = new DimMid();
+        rep_template = new DimRep();
+                     //  ax  ay  ox   w   h
         super(dimetric, 24, 12,  4, 24, 12);
     }
 }
