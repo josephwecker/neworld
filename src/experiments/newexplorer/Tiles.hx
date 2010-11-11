@@ -44,8 +44,11 @@ class TileRenderer {
 
     public function render(col :Column, dat :BitmapData, x :Int, y :Int, ref_height :Int, ?hi=false) {
         if(top_template == null) return;
-        var height_diff = col.total_height - ref_height;
-        var norm_hdiff = Math.round(height_diff / 0xffff * 512);
+        //var this_height  = (Std.int(col.total_height / 0xffff * 512) >> 3) << 3;
+        //var other_height = (Std.int(ref_height / 0xffff * 512) >> 3) << 3;
+        var this_height  = Std.int(col.total_height / 0xffff * 512 / 7) * 7;
+        var other_height = Std.int(ref_height / 0xffff * 512 / 7) * 7;
+        var norm_hdiff = this_height - other_height;
         y = y - norm_hdiff;
 
         var base_color = 2 * Math.floor(col.total_height / 0xffff * 64);
