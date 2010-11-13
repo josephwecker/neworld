@@ -42,8 +42,8 @@ class Explorer implements IObserver {
     function rotate(e :flash.events.KeyboardEvent) {
         if(e != null) {
             var s = String.fromCharCode(e.charCode);
-            if(s == 'L') D.orientation = D.rel(D.RIGHT);
-            else if(s == 'H') D.orientation = D.rel(D.LEFT);
+            if(s == 'L') D.orientation = D.rel(D.UPRIGHT);
+            else if(s == 'H') D.orientation = D.rel(D.UPLEFT);
             else if(s == 'h') curr_col = curr_col.n[D.rel(D.LEFT)];
             else if(s == 'k') curr_col = curr_col.n[D.rel(D.UP)];
             else if(s == 'j') curr_col = curr_col.n[D.rel(D.DOWN)];
