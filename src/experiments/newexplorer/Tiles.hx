@@ -104,40 +104,41 @@ class DimetricTile extends TileRenderer {
     public function new() {
         col_template = new DimCol();
                      //  ax  ay  ox   w   h
-        super(dimetric, 24, 12,  -2, 24, 12);
+        super(dimetric, 24, 12,  -2, 26, 12);
     }
 
     public override function tile_render_top(opts :RenderOpts) :BitmapData {
         var template = new flash.display.Shape();
-        var center = [13.0, 15.0];
+        var center = [width/2, height/2+50];
 
-        var diffs = new Array<Bool>();
+        var diffs = new Array<Int>();
         for(neighbor_num in D.LEFT...(D.LEFT+8)) {
             var neighbor = opts.column.n[D.rel(neighbor_num)];
             var norm_hdiff = real_col_height(neighbor.total_height) -
                              real_col_height(opts.column.total_height);
-            diffs[neighbor_num & 7] = norm_hdiff >= 9;
+            diffs[neighbor_num & 7] = norm_hdiff >> 1;
         }
-        diffs[D.LEFT]  = diffs[D.UPLEFT]    || diffs[D.LEFT]  || diffs[D.DOWNLEFT];
-        diffs[D.UP]    = diffs[D.UPLEFT]    || diffs[D.UP]    || diffs[D.UPRIGHT];
-        diffs[D.RIGHT] = diffs[D.UPRIGHT]   || diffs[D.RIGHT] || diffs[D.DOWNRIGHT];
-        diffs[D.DOWN]  = diffs[D.DOWNRIGHT] || diffs[D.DOWN]  || diffs[D.DOWNLEFT];
+
+        diffs[D.UPLEFT]    = (diffs[D.UPLEFT]    + diffs[D.LEFT]  + diffs[D.UP])   >>1;
+        diffs[D.UPRIGHT]   = (diffs[D.UPRIGHT]   + diffs[D.RIGHT] + diffs[D.UP])   >>1;
+        diffs[D.DOWNLEFT]  = (diffs[D.DOWNLEFT]  + diffs[D.LEFT]  + diffs[D.DOWN]) >>1;
+        diffs[D.DOWNRIGHT] = (diffs[D.DOWNRIGHT] + diffs[D.RIGHT] + diffs[D.DOWN]) >>1;
 
 
         var vertices = new Array<Array<Float>>();
-        vertices[D.LEFT]      = [ 1.0, 15.0 - (diffs[D.LEFT]      ? 9.0 : 0.0)];
-        vertices[D.UPLEFT]    = [ 0.0, 21.0 - (diffs[D.UPLEFT]    ? 9.0 : 0.0)];
-        vertices[D.UP]        = [12.0, 21.0 - (diffs[D.UP]        ? 9.0 : 0.0)];
-        vertices[D.UPRIGHT]   = [24.0, 21.0 - (diffs[D.UPRIGHT]   ? 9.0 : 0.0)];
-        vertices[D.RIGHT]     = [25.0, 15.0 - (diffs[D.RIGHT]     ? 9.0 : 0.0)];
-        vertices[D.DOWNRIGHT] = [26.0,  9.0 - (diffs[D.DOWNRIGHT] ? 9.0 : 0.0)];
-        vertices[D.DOWN]      = [14.0,  9.0 - (diffs[D.DOWN]      ? 9.0 : 0.0)];
-        vertices[D.DOWNLEFT]  = [ 2.0,  9.0 - (diffs[D.DOWNLEFT]  ? 9.0 : 0.0)];
+        vertices[D.LEFT]      = [ 1.0      , height/2 + 62 - (diffs[D.LEFT]      )];
+        vertices[D.UPLEFT]    = [ 2.0      , 0.0      + 50 - (diffs[D.UPLEFT]    )];
+        vertices[D.UP]        = [width/2+1 , 0.0      + 50 - (diffs[D.UP]        )];
+        vertices[D.UPRIGHT]   = [width+0.0 , 0.0      + 50 - (diffs[D.UPRIGHT]   )];
+        vertices[D.RIGHT]     = [width-1   , height/2 + 50 - (diffs[D.RIGHT]     )];
+        vertices[D.DOWNRIGHT] = [width-2.0 , height   + 50 - (diffs[D.DOWNRIGHT] )];
+        vertices[D.DOWN]      = [width/2-1 , height   + 50 - (diffs[D.DOWN]      )];
+        vertices[D.DOWNLEFT]  = [ 0.0      , height   + 50 - (diffs[D.DOWNLEFT]  )];
 
-        var bmd = new BitmapData(34,26,true,0x000000);
+        var bmd = new BitmapData(width,height+100,true,0x000000);
 
         for( poly in D.LEFT...(D.LEFT+8)) {
-            template.graphics.beginFill(opts.base_color);
+            template.graphics.beginFill(opts.base_color + poly *2);
             template.graphics.moveTo(center[0],center[1]);
             var node_1 = poly & 7;
             var node_2 = (poly + 1) & 7;
@@ -159,7 +160,7 @@ class IsometricTile extends TileRenderer {
 
     public override function tile_render_top(opts :RenderOpts) :BitmapData {
         var template = new flash.display.Shape();
-        var center = [17.0, 47.5];
+        var center = [width/2, height/2+50];
 
         var diffs = new Array<Int>();
         for(neighbor_num in D.LEFT...(D.LEFT+8)) {
@@ -168,6 +169,7 @@ class IsometricTile extends TileRenderer {
                              real_col_height(opts.column.total_height);
             diffs[neighbor_num & 7] = norm_hdiff>>1;
         }
+
         diffs[D.LEFT]  = (diffs[D.UPLEFT]   + diffs[D.LEFT]  + diffs[D.DOWNLEFT])>>1;
         diffs[D.UP]    = (diffs[D.UPLEFT]   + diffs[D.UP]    + diffs[D.UPRIGHT])>>1;
         diffs[D.RIGHT] = (diffs[D.UPRIGHT]  + diffs[D.RIGHT] + diffs[D.DOWNRIGHT])>>1;
@@ -180,16 +182,16 @@ class IsometricTile extends TileRenderer {
         var shade_shadowest = opts.base_color + 0x003000;
 
         var vertices = new Array<Array<Float>>();
-        vertices[D.LEFT]      = [ 0.0, 47.5  - (diffs[D.LEFT]      )];//? 9.0 : 0.0)];
-        vertices[D.UPLEFT]    = [ 8.5, 43.25 - (diffs[D.UPLEFT]    )];//? 9.0 : 0.0)];
-        vertices[D.UP]        = [17.0, 39.0  - (diffs[D.UP]        )];//? 9.0 : 0.0)];
-        vertices[D.UPRIGHT]   = [25.5, 43.25 - (diffs[D.UPRIGHT]   )];//? 9.0 : 0.0)];
-        vertices[D.RIGHT]     = [34.0, 47.5  - (diffs[D.RIGHT]     )];//? 9.0 : 0.0)];
-        vertices[D.DOWNRIGHT] = [25.5, 51.75 - (diffs[D.DOWNRIGHT] )];//? 9.0 : 0.0)];
-        vertices[D.DOWN]      = [17.0, 56.0  - (diffs[D.DOWN]      )];//? 9.0 : 0.0)];
-        vertices[D.DOWNLEFT]  = [ 8.5, 51.75 - (diffs[D.DOWNLEFT]  )];//? 9.0 : 0.0)];
+        vertices[D.LEFT]      = [ 0.0       , height/2   + 50 - (diffs[D.LEFT])];
+        vertices[D.UPLEFT]    = [ width/4   , height/4   + 50 - (diffs[D.UPLEFT])];
+        vertices[D.UP]        = [ width/2   , 0.0        + 50 - (diffs[D.UP])];
+        vertices[D.UPRIGHT]   = [ width*3/4 , height/4   + 50 - (diffs[D.UPRIGHT])];
+        vertices[D.RIGHT]     = [ width     , height/2   + 50 - (diffs[D.RIGHT])];
+        vertices[D.DOWNRIGHT] = [ width*3/4 , height*3/4 + 50 - (diffs[D.DOWNRIGHT])];
+        vertices[D.DOWN]      = [ width/2   , height     + 50 - (diffs[D.DOWN])];
+        vertices[D.DOWNLEFT]  = [ width/4   , height*3/4 + 50 - (diffs[D.DOWNLEFT])];
 
-        var bmd = new BitmapData(34,126,true,0x000000);
+        var bmd = new BitmapData(width,height+100,true,0x000000);
 
         // Fill the small triangles
         /*if(diffs[D.LEFT]) {
@@ -254,13 +256,13 @@ class RenderedTilePool {
         var key = opts.key;
         if(rendered.exists(key)) return rendered.get(key);
         else {
-            var tbmd = opts.top_renderer(opts);
+            var bmd = opts.top_renderer(opts);
             //var cbmd = opts.col_renderer(opts);
-            var bmd = new BitmapData(34,126,true,0x000000);
+            //var bmd = new BitmapData(34,126,true,0x000000);
             //for( i in 18...bmd.height ) {
             //    bmd.copyPixels(cbmd, cbmd.rect, new flash.geom.Point(0,i));
             //}
-            bmd.copyPixels(tbmd, tbmd.rect, new flash.geom.Point(0,0),null,null,true);
+            //bmd.copyPixels(tbmd, tbmd.rect, new flash.geom.Point(0,0),null,null,true);
             rendered.set(key, bmd);
             return bmd;
         }
