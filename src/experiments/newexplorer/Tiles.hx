@@ -85,13 +85,13 @@ class TileRenderer {
         var dat = opts.col_template.bitmapData;
         var stamp = dat.getVector(dat.rect);
         
-        var i = 0;
-        for(pixel in stamp) {
-            if(pixel== 4290145609 ) stamp[i] = opts.base_color;
-            else if(pixel== 4285342720 ) stamp[i] = opts.base_color - 0x002200;
-            else if(pixel== 4287777060 ) stamp[i] = opts.base_color + 0x002200;
-            i += 1;
-        }
+        //var i = 0;
+        //for(pixel in stamp) {
+        //    if(pixel== 4290145609 ) stamp[i] = opts.base_color;
+        //    else if(pixel== 4285342720 ) stamp[i] = opts.base_color - 0x002200;
+        //    else if(pixel== 4287777060 ) stamp[i] = opts.base_color + 0x002200;
+        //    i += 1;
+        //}
         
         var bmd = new BitmapData(dat.width, dat.height, true, 0);
         bmd.setVector(bmd.rect, stamp);
@@ -103,12 +103,12 @@ class DimetricTile extends TileRenderer {
     public function new() {
         col_template = new DimCol();
                      //  ax  ay  ox   w   h
-        super(dimetric, 24, 12,  4, 24, 12);
+        super(dimetric, 24, 12,  -2, 24, 12);
     }
 
     public override function tile_render_top(opts :RenderOpts) :BitmapData {
         var template = new flash.display.Shape();
-        var center = [17.0, 17.5];
+        var center = [13.0, 15.0];
 
         var highers = new Array<Bool>();
         for(neighbor_num in D.LEFT...(D.LEFT+8)) {
@@ -124,14 +124,14 @@ class DimetricTile extends TileRenderer {
 
 
         var vertices = new Array<Array<Float>>();
-        vertices[D.LEFT]      = [ 1.0, 15.0  - (highers[D.LEFT]      ? 9.0 : 0.0)];
-        vertices[D.UPLEFT]    = [ 0.0, 21.0  - (highers[D.UPLEFT]    ? 9.0 : 0.0)];
-        vertices[D.UP]        = [12.0, 21.0  - (highers[D.UP]        ? 9.0 : 0.0)];
-        vertices[D.UPRIGHT]   = [24.0, 21.0  - (highers[D.UPRIGHT]   ? 9.0 : 0.0)];
-        vertices[D.RIGHT]     = [25.0, 15.0  - (highers[D.RIGHT]     ? 9.0 : 0.0)];
-        vertices[D.DOWNRIGHT] = [26.0,  9.0  - (highers[D.DOWNRIGHT] ? 9.0 : 0.0)];
-        vertices[D.DOWN]      = [14.0,  9.0  - (highers[D.DOWN]      ? 9.0 : 0.0)];
-        vertices[D.DOWNLEFT]  = [ 2.0,  9.0  - (highers[D.DOWNLEFT]  ? 9.0 : 0.0)];
+        vertices[D.LEFT]      = [ 1.0, 15.0 - (highers[D.LEFT]      ? 9.0 : 0.0)];
+        vertices[D.UPLEFT]    = [ 0.0, 21.0 - (highers[D.UPLEFT]    ? 9.0 : 0.0)];
+        vertices[D.UP]        = [12.0, 21.0 - (highers[D.UP]        ? 9.0 : 0.0)];
+        vertices[D.UPRIGHT]   = [24.0, 21.0 - (highers[D.UPRIGHT]   ? 9.0 : 0.0)];
+        vertices[D.RIGHT]     = [25.0, 15.0 - (highers[D.RIGHT]     ? 9.0 : 0.0)];
+        vertices[D.DOWNRIGHT] = [26.0,  9.0 - (highers[D.DOWNRIGHT] ? 9.0 : 0.0)];
+        vertices[D.DOWN]      = [14.0,  9.0 - (highers[D.DOWN]      ? 9.0 : 0.0)];
+        vertices[D.DOWNLEFT]  = [ 2.0,  9.0 - (highers[D.DOWNLEFT]  ? 9.0 : 0.0)];
 
         var bmd = new BitmapData(34,26,true,0x000000);
 
@@ -172,9 +172,11 @@ class IsometricTile extends TileRenderer {
         highers[D.RIGHT] = highers[D.UPRIGHT]   || highers[D.RIGHT] || highers[D.DOWNRIGHT];
         highers[D.DOWN]  = highers[D.DOWNRIGHT] || highers[D.DOWN]  || highers[D.DOWNLEFT];
 
+        var shade_highlightest = opts.base_color - 0x003000;
+        var shade_highlight = opts.base_color - 0x001500;
         var shade_flat = opts.base_color;
-        var shade_highlight = opts.base_color - 0x002200;
-        var shade_shadow = opts.base_color + 0x002200;
+        var shade_shadow = opts.base_color + 0x001500;
+        var shade_shadowest = opts.base_color + 0x003000;
 
         var vertices = new Array<Array<Float>>();
         vertices[D.LEFT]      = [ 0.0, 17.5  - (highers[D.LEFT]      ? 9.0 : 0.0)];
