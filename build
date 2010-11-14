@@ -7,6 +7,7 @@ def build():
     build_assets('assets.terrain.Display',   ['assets/terrain/display/*'])
     mkdir('swfs')
     experiments()
+    scomm()
 
 def clean():
     rmdir('swfs')
@@ -31,5 +32,8 @@ def experiments():
     haxe('experiments.newexplorer.Explorer', libs=['polygonal'],
         assets=['assets.creatures.Display', 'assets.creatures.Sounds',
         'assets.terrain.Display'])
+
+def scomm():
+    haxe('experiments.scomm.SComm')
 
 main()
