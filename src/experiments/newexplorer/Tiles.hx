@@ -39,7 +39,8 @@ class TileRenderer {
     }
 
     inline function real_col_height(in_height :Int) {
-        return Std.int(in_height / 0xffff * 512 / 9) * 9;
+        //return Std.int(in_height / 0xffff * 512 / 9) * 9;
+        return Std.int(in_height / 0xffff * 512 / 45) * 45;
     }
 
     public function render(col :Column, dat :BitmapData, x :Int, y :Int, ref_height :Int, ?hi=false) {
@@ -56,7 +57,7 @@ class TileRenderer {
         for(neighbor_num in 0...8) {
             var neighbor = col.n[D.rel(neighbor_num)];
             norm_hdiff = real_col_height(neighbor.total_height) - this_height;
-            key += norm_hdiff >= 9 ? '1' : '0';
+            key += norm_hdiff;
         }
 
         var attribs :RenderOpts = {
@@ -110,28 +111,28 @@ class DimetricTile extends TileRenderer {
         var template = new flash.display.Shape();
         var center = [13.0, 15.0];
 
-        var highers = new Array<Bool>();
+        var diffs = new Array<Bool>();
         for(neighbor_num in D.LEFT...(D.LEFT+8)) {
             var neighbor = opts.column.n[D.rel(neighbor_num)];
             var norm_hdiff = real_col_height(neighbor.total_height) -
                              real_col_height(opts.column.total_height);
-            highers[neighbor_num & 7] = norm_hdiff >= 9;
+            diffs[neighbor_num & 7] = norm_hdiff >= 9;
         }
-        highers[D.LEFT]  = highers[D.UPLEFT]    || highers[D.LEFT]  || highers[D.DOWNLEFT];
-        highers[D.UP]    = highers[D.UPLEFT]    || highers[D.UP]    || highers[D.UPRIGHT];
-        highers[D.RIGHT] = highers[D.UPRIGHT]   || highers[D.RIGHT] || highers[D.DOWNRIGHT];
-        highers[D.DOWN]  = highers[D.DOWNRIGHT] || highers[D.DOWN]  || highers[D.DOWNLEFT];
+        diffs[D.LEFT]  = diffs[D.UPLEFT]    || diffs[D.LEFT]  || diffs[D.DOWNLEFT];
+        diffs[D.UP]    = diffs[D.UPLEFT]    || diffs[D.UP]    || diffs[D.UPRIGHT];
+        diffs[D.RIGHT] = diffs[D.UPRIGHT]   || diffs[D.RIGHT] || diffs[D.DOWNRIGHT];
+        diffs[D.DOWN]  = diffs[D.DOWNRIGHT] || diffs[D.DOWN]  || diffs[D.DOWNLEFT];
 
 
         var vertices = new Array<Array<Float>>();
-        vertices[D.LEFT]      = [ 1.0, 15.0 - (highers[D.LEFT]      ? 9.0 : 0.0)];
-        vertices[D.UPLEFT]    = [ 0.0, 21.0 - (highers[D.UPLEFT]    ? 9.0 : 0.0)];
-        vertices[D.UP]        = [12.0, 21.0 - (highers[D.UP]        ? 9.0 : 0.0)];
-        vertices[D.UPRIGHT]   = [24.0, 21.0 - (highers[D.UPRIGHT]   ? 9.0 : 0.0)];
-        vertices[D.RIGHT]     = [25.0, 15.0 - (highers[D.RIGHT]     ? 9.0 : 0.0)];
-        vertices[D.DOWNRIGHT] = [26.0,  9.0 - (highers[D.DOWNRIGHT] ? 9.0 : 0.0)];
-        vertices[D.DOWN]      = [14.0,  9.0 - (highers[D.DOWN]      ? 9.0 : 0.0)];
-        vertices[D.DOWNLEFT]  = [ 2.0,  9.0 - (highers[D.DOWNLEFT]  ? 9.0 : 0.0)];
+        vertices[D.LEFT]      = [ 1.0, 15.0 - (diffs[D.LEFT]      ? 9.0 : 0.0)];
+        vertices[D.UPLEFT]    = [ 0.0, 21.0 - (diffs[D.UPLEFT]    ? 9.0 : 0.0)];
+        vertices[D.UP]        = [12.0, 21.0 - (diffs[D.UP]        ? 9.0 : 0.0)];
+        vertices[D.UPRIGHT]   = [24.0, 21.0 - (diffs[D.UPRIGHT]   ? 9.0 : 0.0)];
+        vertices[D.RIGHT]     = [25.0, 15.0 - (diffs[D.RIGHT]     ? 9.0 : 0.0)];
+        vertices[D.DOWNRIGHT] = [26.0,  9.0 - (diffs[D.DOWNRIGHT] ? 9.0 : 0.0)];
+        vertices[D.DOWN]      = [14.0,  9.0 - (diffs[D.DOWN]      ? 9.0 : 0.0)];
+        vertices[D.DOWNLEFT]  = [ 2.0,  9.0 - (diffs[D.DOWNLEFT]  ? 9.0 : 0.0)];
 
         var bmd = new BitmapData(34,26,true,0x000000);
 
@@ -158,19 +159,19 @@ class IsometricTile extends TileRenderer {
 
     public override function tile_render_top(opts :RenderOpts) :BitmapData {
         var template = new flash.display.Shape();
-        var center = [17.0, 17.5];
+        var center = [17.0, 47.5];
 
-        var highers = new Array<Bool>();
+        var diffs = new Array<Int>();
         for(neighbor_num in D.LEFT...(D.LEFT+8)) {
             var neighbor = opts.column.n[D.rel(neighbor_num)];
             var norm_hdiff = real_col_height(neighbor.total_height) -
                              real_col_height(opts.column.total_height);
-            highers[neighbor_num & 7] = norm_hdiff >= 9;
+            diffs[neighbor_num & 7] = norm_hdiff>>1;
         }
-        highers[D.LEFT]  = highers[D.UPLEFT]    || highers[D.LEFT]  || highers[D.DOWNLEFT];
-        highers[D.UP]    = highers[D.UPLEFT]    || highers[D.UP]    || highers[D.UPRIGHT];
-        highers[D.RIGHT] = highers[D.UPRIGHT]   || highers[D.RIGHT] || highers[D.DOWNRIGHT];
-        highers[D.DOWN]  = highers[D.DOWNRIGHT] || highers[D.DOWN]  || highers[D.DOWNLEFT];
+        diffs[D.LEFT]  = (diffs[D.UPLEFT]   + diffs[D.LEFT]  + diffs[D.DOWNLEFT])>>1;
+        diffs[D.UP]    = (diffs[D.UPLEFT]   + diffs[D.UP]    + diffs[D.UPRIGHT])>>1;
+        diffs[D.RIGHT] = (diffs[D.UPRIGHT]  + diffs[D.RIGHT] + diffs[D.DOWNRIGHT])>>1;
+        diffs[D.DOWN]  = (diffs[D.DOWNRIGHT]+ diffs[D.DOWN]  + diffs[D.DOWNLEFT])>>1;
 
         var shade_highlightest = opts.base_color - 0x003000;
         var shade_highlight = opts.base_color - 0x001500;
@@ -179,19 +180,19 @@ class IsometricTile extends TileRenderer {
         var shade_shadowest = opts.base_color + 0x003000;
 
         var vertices = new Array<Array<Float>>();
-        vertices[D.LEFT]      = [ 0.0, 17.5  - (highers[D.LEFT]      ? 9.0 : 0.0)];
-        vertices[D.UPLEFT]    = [ 8.5, 13.25 - (highers[D.UPLEFT]    ? 9.0 : 0.0)];
-        vertices[D.UP]        = [17.0,  9.0  - (highers[D.UP]        ? 9.0 : 0.0)];
-        vertices[D.UPRIGHT]   = [25.5, 13.25 - (highers[D.UPRIGHT]   ? 9.0 : 0.0)];
-        vertices[D.RIGHT]     = [34.0, 17.5  - (highers[D.RIGHT]     ? 9.0 : 0.0)];
-        vertices[D.DOWNRIGHT] = [25.5, 21.75 - (highers[D.DOWNRIGHT] ? 9.0 : 0.0)];
-        vertices[D.DOWN]      = [17.0, 26.0  - (highers[D.DOWN]      ? 9.0 : 0.0)];
-        vertices[D.DOWNLEFT]  = [ 8.5, 21.75 - (highers[D.DOWNLEFT]  ? 9.0 : 0.0)];
+        vertices[D.LEFT]      = [ 0.0, 47.5  - (diffs[D.LEFT]      )];//? 9.0 : 0.0)];
+        vertices[D.UPLEFT]    = [ 8.5, 43.25 - (diffs[D.UPLEFT]    )];//? 9.0 : 0.0)];
+        vertices[D.UP]        = [17.0, 39.0  - (diffs[D.UP]        )];//? 9.0 : 0.0)];
+        vertices[D.UPRIGHT]   = [25.5, 43.25 - (diffs[D.UPRIGHT]   )];//? 9.0 : 0.0)];
+        vertices[D.RIGHT]     = [34.0, 47.5  - (diffs[D.RIGHT]     )];//? 9.0 : 0.0)];
+        vertices[D.DOWNRIGHT] = [25.5, 51.75 - (diffs[D.DOWNRIGHT] )];//? 9.0 : 0.0)];
+        vertices[D.DOWN]      = [17.0, 56.0  - (diffs[D.DOWN]      )];//? 9.0 : 0.0)];
+        vertices[D.DOWNLEFT]  = [ 8.5, 51.75 - (diffs[D.DOWNLEFT]  )];//? 9.0 : 0.0)];
 
-        var bmd = new BitmapData(34,26,true,0x000000);
+        var bmd = new BitmapData(34,126,true,0x000000);
 
         // Fill the small triangles
-        if(highers[D.LEFT]) {
+        /*if(diffs[D.LEFT]) {
             template.graphics.beginFill(shade_shadow);
             template.graphics.moveTo(center[0],center[1]);
             template.graphics.lineTo(0.0, 8.5);
@@ -199,7 +200,7 @@ class IsometricTile extends TileRenderer {
             template.graphics.lineTo(17.0, 26.0);
             template.graphics.endFill();
         }
-        if(highers[D.RIGHT]) {
+        if(diffs[D.RIGHT]) {
             template.graphics.beginFill(shade_highlight);
             template.graphics.moveTo(center[0],center[1]);
             template.graphics.lineTo(34.0, 8.5);
@@ -208,17 +209,17 @@ class IsometricTile extends TileRenderer {
             template.graphics.endFill();
         }
 
-        if(highers[D.DOWN]) {
+        if(diffs[D.DOWN]) {
             template.graphics.beginFill(shade_flat);
             template.graphics.moveTo(center[0],center[1]);
             template.graphics.lineTo(8.5, 21.75);
             template.graphics.lineTo(17.0, 26.0);
             template.graphics.lineTo(25.5, 21.7);
             template.graphics.endFill();
-        }
+        }*/
 
         for( poly in D.LEFT...(D.LEFT+8)) {
-            template.graphics.beginFill(opts.base_color);
+            template.graphics.beginFill(opts.base_color+poly*2);
             template.graphics.moveTo(center[0],center[1]);
             var node_1 = poly & 7;
             var node_2 = (poly + 1) & 7;
@@ -254,11 +255,11 @@ class RenderedTilePool {
         if(rendered.exists(key)) return rendered.get(key);
         else {
             var tbmd = opts.top_renderer(opts);
-            var cbmd = opts.col_renderer(opts);
-            var bmd = new BitmapData(34,109,true,0x000000);
-            for( i in 18...bmd.height ) {
-                bmd.copyPixels(cbmd, cbmd.rect, new flash.geom.Point(0,i));
-            }
+            //var cbmd = opts.col_renderer(opts);
+            var bmd = new BitmapData(34,126,true,0x000000);
+            //for( i in 18...bmd.height ) {
+            //    bmd.copyPixels(cbmd, cbmd.rect, new flash.geom.Point(0,i));
+            //}
             bmd.copyPixels(tbmd, tbmd.rect, new flash.geom.Point(0,0),null,null,true);
             rendered.set(key, bmd);
             return bmd;
