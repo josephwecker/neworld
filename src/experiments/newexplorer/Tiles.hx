@@ -138,10 +138,14 @@ class DimetricTile extends TileRenderer {
         var bmd = new BitmapData(width,height+100,true,0x000000);
 
         for( poly in D.LEFT...(D.LEFT+8)) {
-            template.graphics.beginFill(opts.base_color + poly *2);
-            template.graphics.moveTo(center[0],center[1]);
             var node_1 = poly & 7;
             var node_2 = (poly + 1) & 7;
+            if (diffs[node_1] == 0 && diffs[node_2] == 0 ) {
+                template.graphics.beginFill(opts.base_color);
+            } else {
+                template.graphics.beginFill(opts.base_color + 0x330011);
+            }
+            template.graphics.moveTo(center[0],center[1]);
             template.graphics.lineTo(vertices[node_1][0], vertices[node_1][1]);
             template.graphics.lineTo(vertices[node_2][0], vertices[node_2][1]);
             template.graphics.endFill();
@@ -221,10 +225,14 @@ class IsometricTile extends TileRenderer {
         }*/
 
         for( poly in D.LEFT...(D.LEFT+8)) {
-            template.graphics.beginFill(opts.base_color+poly*2);
-            template.graphics.moveTo(center[0],center[1]);
             var node_1 = poly & 7;
             var node_2 = (poly + 1) & 7;
+            if (diffs[node_1] == 0 && diffs[node_2] == 0 ) {
+                template.graphics.beginFill(opts.base_color);
+            } else {
+                template.graphics.beginFill(opts.base_color + 0x330011);
+            }
+            template.graphics.moveTo(center[0],center[1]);
             template.graphics.lineTo(vertices[node_1][0], vertices[node_1][1]);
             template.graphics.lineTo(vertices[node_2][0], vertices[node_2][1]);
             template.graphics.endFill();
