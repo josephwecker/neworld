@@ -126,7 +126,7 @@ class DimetricTile extends TileRenderer {
 
 
         var vertices = new Array<Array<Float>>();
-        vertices[D.LEFT]      = [ 1.0      , height/2 + 62 - (diffs[D.LEFT]      )];
+        vertices[D.LEFT]      = [ 1.0      , height/2 + 50 - (diffs[D.LEFT]      )];
         vertices[D.UPLEFT]    = [ 2.0      , 0.0      + 50 - (diffs[D.UPLEFT]    )];
         vertices[D.UP]        = [width/2+1 , 0.0      + 50 - (diffs[D.UP]        )];
         vertices[D.UPRIGHT]   = [width+0.0 , 0.0      + 50 - (diffs[D.UPRIGHT]   )];
