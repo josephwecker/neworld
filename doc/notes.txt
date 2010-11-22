@@ -72,3 +72,19 @@ from their desire to share it (or coercion?)
        * Sea creatures / vegitation
        * Hurricanes, tsunami
        * Volcano, earthquake / Tectonics
+
+------
+
+From Samuel:
+  - Different fonts for different languages that reflect somewhat the features
+    of that language's phonology.
+  - The tone of a communication can be indicated with colors- just like the
+    "focus" system- then you get a feel for how threatening a creature is based
+    on color even when you don't know the language at all.
+
+(From a discussion a while ago)
+  - For other game languages- take the human description, hash it, and then map
+    the (longish) hash against a markov-chain derived phoneticly "learned"
+    dialect of that language - then just pipe the result through a
+    speach-to-text system (ideally one that supports far more sounds than the
+    standard English ones).
