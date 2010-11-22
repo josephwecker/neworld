@@ -36,8 +36,8 @@ class ParticleRender extends flash.display.Sprite {
                 h: 120 + P.rng.norm(5)}
         }
 
-        for(i in 0...4000) {
-            for(n2 in 0...10) {
+        for(i in 0...3500) {
+            for(n2 in 0...3) {
                 var node = nodes[n2];
                 var curr_x = node.x + (node.w / 2.0) + P.rng.norm(node.w / 2.5 - (i * 0.015));
                 var curr_y = node.y + (node.h / 2.0) + P.rng.norm(node.h / 2.5 - (i * 0.015));
