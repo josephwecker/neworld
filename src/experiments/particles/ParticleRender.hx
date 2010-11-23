@@ -21,8 +21,8 @@ class ParticleRender extends flash.display.Sprite {
     }
 
     function render_it(_) {
-        var orig :HSL = {h:90.0, s:0.5, l:0.2};
-        var base :HSL = {h: 0.0, s:0.0, l:0.0};
+        var orig :HSL = {h: 90.0, s: 0.5, l: 0.2};
+        var base :HSL = {h:  0.0, s: 0.0, l: 0.0};
         var nodes = new Array<Node>();
         for(n in 0...10) {
             var new_x = 100 + P.rng.norm(150);
@@ -77,9 +77,9 @@ class Particle extends flash.display.Shape {
         graphics.beginGradientFill(
                 flash.display.GradientType.LINEAR,
                 [rc(base_color),
-                 rc({h:base_color.h,
-                     s:base_color.s,
-                     l:new_l})],
+                 rc({h: base_color.h,
+                     s: base_color.s,
+                     l: new_l})],
                 //[rc(base_color), rc(base_color), 0xff0000],
                 [1.0, 0.95 + P.rng.norm(0.05)],
                 [0x00, 0xff],
@@ -104,9 +104,9 @@ class Particle extends flash.display.Shape {
 
     function rc(base_color :HSL) :Int {
         var col = {
-            h:rf(base_color.h, 0.15),
-            s:rf(base_color.s),
-            l:rf(base_color.l, 0.3)
+            h: rf(base_color.h, 0.15),
+            s: rf(base_color.s),
+            l: rf(base_color.l, 0.3)
         };
         var rcol = Colors.hsl2rgb(col);
         return Colors.toInt(rcol);
