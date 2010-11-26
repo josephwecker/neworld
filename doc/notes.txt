@@ -88,3 +88,14 @@ From Samuel:
     dialect of that language - then just pipe the result through a
     speach-to-text system (ideally one that supports far more sounds than the
     standard English ones).
+
+
+-------
+
+Armor
+  - because there are more things to do, you don't have to be "suited up" all
+    the time-
+  - make it easy to take off armor and put it on again when suiting up
+  - more important the _fit_ (esp. for solid armor)- not so much "skill" in
+    using the armor-  really very minimal skill involved- mostly material and
+    fit- with secondary how long it takes to put on and take off.
