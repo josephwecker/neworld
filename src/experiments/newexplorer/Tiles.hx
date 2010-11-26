@@ -76,7 +76,7 @@ class TileRenderer {
         if(hi) {
             dat.copyPixels(person.bitmapData, person.bitmapData.rect,
                 new flash.geom.Point(x + ((width - person.width) / 2),
-                                     y + (height / 2) - person.height +4));
+                                     y + (height / 2) - person.height +50));
         }
     }
 
@@ -85,7 +85,7 @@ class TileRenderer {
     public function tile_render_col(opts:RenderOpts) : BitmapData {
         var dat = opts.col_template.bitmapData;
         var stamp = dat.getVector(dat.rect);
-        
+
         //var i = 0;
         //for(pixel in stamp) {
         //    if(pixel== 4290145609 ) stamp[i] = opts.base_color;
@@ -93,18 +93,124 @@ class TileRenderer {
         //    else if(pixel== 4287777060 ) stamp[i] = opts.base_color + 0x002200;
         //    i += 1;
         //}
-        
+
         var bmd = new BitmapData(dat.width, dat.height, true, 0);
         bmd.setVector(bmd.rect, stamp);
         return bmd;
     }
+
+    public function shader(base, vect_1, vect_2, tri) {
+        var v1       :Int;
+        var v2       :Int;
+        var v3       :Int;
+        var v4       :Int;
+        var color    :UInt;
+        var shade_N  = base;
+        var shade_NE = base+ 0x111111;
+        var shade_E  = base+ 0x222222;
+        var shade_SE = base+ 0x111111;
+        var shade_S  = base;
+        var shade_SW = base- 0x111111;
+        var shade_W  = base- 0x222222;
+        var shade_NW = base- 0x111111;
+
+        if( tri == D.LEFT ) {
+            //v1 = vect_2;
+            //v2 = vect_2;
+            v1 = vect_1;
+            v2 = 0;
+            v3 = vect_1;
+            v4 = 0;
+        } else if( tri == D.UPLEFT ) {
+            //
+            v1 = vect_2;
+            v2 = vect_2;
+            //
+            v3 = 0;
+            v4 = 0;
+        } else if( tri == D.UP ) {
+            v1 = vect_1;
+            //
+            v2 = vect_1;
+            v3 = 0;
+            //
+            v4 = 0;
+        } else if( tri == D.UPRIGHT ) {
+            //
+            v1 = 0;
+            //
+            v2 = vect_2;
+            v3 = 0;
+            v4 = vect_2;
+        } else if( tri == D.RIGHT ) {
+            v1 = 0;
+            v2 = vect_1;
+            //
+            v3 = 0;
+            //
+            v4 = vect_1;
+        } else if( tri == D.DOWNRIGHT ) {
+            v1 = 0;
+            //
+            v2 = 0;
+            v3 = vect_2;
+            //
+            v4 = vect_2;
+        } else if( tri == D.DOWN ) {
+            //
+            v1 = 0;
+            v2 = 0;
+            //
+            v3 = vect_1;
+            v4 = vect_1;
+        } else {
+            v1 = vect_2;
+            v2 = 0;
+            //
+            v3 = vect_2;
+            //
+            v4 = 0;
+        }
+
+
+
+        if( v1 == v2 && v2 == v3 && v3 == v4 ) {
+            color = base;
+        } else if( (v1 == v2) && (v1  < v3) && (v3 == v4) ) {
+            trace("n");
+            color = shade_N;
+        } else if( (v1  < v3) && (v1 == v4) && (v2  < v1) ) {
+            trace("ne");
+            color = shade_NE;
+        } else if( (v1 == v3) && (v1  > v2) && (v2 == v4) ) {
+            trace("e");
+            color = shade_E;
+        } else if( (v1  > v2) && (v2 == v3) && (v3  > v4) ) {
+            trace("se");
+            color = shade_SE;
+        } else if( (v1 == v2) && (v1  > v3) && (v3 == v4) ) {
+            trace("s");
+            color = shade_S;
+        } else if( (v1  < v2) && (v2 == v3) && (v3  < v4) ) {
+            trace("sw");
+            color = shade_SW;
+        } else if( (v1 == v3) && (v1  < v2) && (v2 == v4) ) {
+            trace("w");
+            color = shade_W;
+        } else {
+            trace("nw");
+            color = shade_NW;
+        }
+        return color;
+    }
+
 }
 
 class DimetricTile extends TileRenderer {
     public function new() {
         col_template = new DimCol();
                      //  ax  ay  ox   w   h
-        super(dimetric, 24, 12,  -2, 26, 12);
+        super(dimetric, 24, 12,  0, 24, 12);
     }
 
     public override function tile_render_top(opts :RenderOpts) :BitmapData {
@@ -126,22 +232,23 @@ class DimetricTile extends TileRenderer {
 
 
         var vertices = new Array<Array<Float>>();
-        vertices[D.LEFT]      = [ 1.0      , height/2 + 50 - (diffs[D.LEFT]      )];
-        vertices[D.UPLEFT]    = [ 2.0      , 0.0      + 50 - (diffs[D.UPLEFT]    )];
-        vertices[D.UP]        = [width/2+1 , 0.0      + 50 - (diffs[D.UP]        )];
+        vertices[D.LEFT]      = [ 0.0      , height/2 + 50 - (diffs[D.LEFT]      )];
+        vertices[D.UPLEFT]    = [ 0.0      , 0.0      + 50 - (diffs[D.UPLEFT]    )];
+        vertices[D.UP]        = [width/2+0 , 0.0      + 50 - (diffs[D.UP]        )];
         vertices[D.UPRIGHT]   = [width+0.0 , 0.0      + 50 - (diffs[D.UPRIGHT]   )];
-        vertices[D.RIGHT]     = [width-1   , height/2 + 50 - (diffs[D.RIGHT]     )];
-        vertices[D.DOWNRIGHT] = [width-2.0 , height   + 50 - (diffs[D.DOWNRIGHT] )];
-        vertices[D.DOWN]      = [width/2-1 , height   + 50 - (diffs[D.DOWN]      )];
+        vertices[D.RIGHT]     = [width-0   , height/2 + 50 - (diffs[D.RIGHT]     )];
+        vertices[D.DOWNRIGHT] = [width-0.0 , height   + 50 - (diffs[D.DOWNRIGHT] )];
+        vertices[D.DOWN]      = [width/2-0 , height   + 50 - (diffs[D.DOWN]      )];
         vertices[D.DOWNLEFT]  = [ 0.0      , height   + 50 - (diffs[D.DOWNLEFT]  )];
 
         var bmd = new BitmapData(width,height+100,true,0x000000);
 
+            template.graphics.lineStyle(0.25,0x000000);
         for( poly in D.LEFT...(D.LEFT+8)) {
-            template.graphics.beginFill(opts.base_color + poly *2);
-            template.graphics.moveTo(center[0],center[1]);
             var node_1 = poly & 7;
             var node_2 = (poly + 1) & 7;
+            template.graphics.beginFill(shader(opts.base_color,diffs[node_1],diffs[node_2],poly));
+            template.graphics.moveTo(center[0],center[1]);
             template.graphics.lineTo(vertices[node_1][0], vertices[node_1][1]);
             template.graphics.lineTo(vertices[node_2][0], vertices[node_2][1]);
             template.graphics.endFill();
@@ -160,7 +267,8 @@ class IsometricTile extends TileRenderer {
 
     public override function tile_render_top(opts :RenderOpts) :BitmapData {
         var template = new flash.display.Shape();
-        var center = [width/2, height/2+50];
+        var center   = [width/2, height/2+50];
+        var color    = opts.base_color;
 
         var diffs = new Array<Int>();
         for(neighbor_num in D.LEFT...(D.LEFT+8)) {
@@ -175,12 +283,6 @@ class IsometricTile extends TileRenderer {
         diffs[D.RIGHT] = (diffs[D.UPRIGHT]  + diffs[D.RIGHT] + diffs[D.DOWNRIGHT])>>1;
         diffs[D.DOWN]  = (diffs[D.DOWNRIGHT]+ diffs[D.DOWN]  + diffs[D.DOWNLEFT])>>1;
 
-        var shade_highlightest = opts.base_color - 0x003000;
-        var shade_highlight = opts.base_color - 0x001500;
-        var shade_flat = opts.base_color;
-        var shade_shadow = opts.base_color + 0x001500;
-        var shade_shadowest = opts.base_color + 0x003000;
-
         var vertices = new Array<Array<Float>>();
         vertices[D.LEFT]      = [ 0.0       , height/2   + 50 - (diffs[D.LEFT])];
         vertices[D.UPLEFT]    = [ width/4   , height/4   + 50 - (diffs[D.UPLEFT])];
@@ -193,45 +295,18 @@ class IsometricTile extends TileRenderer {
 
         var bmd = new BitmapData(width,height+100,true,0x000000);
 
-        // Fill the small triangles
-        /*if(diffs[D.LEFT]) {
-            template.graphics.beginFill(shade_shadow);
-            template.graphics.moveTo(center[0],center[1]);
-            template.graphics.lineTo(0.0, 8.5);
-            template.graphics.lineTo(0.0, 17.5);
-            template.graphics.lineTo(17.0, 26.0);
-            template.graphics.endFill();
-        }
-        if(diffs[D.RIGHT]) {
-            template.graphics.beginFill(shade_highlight);
-            template.graphics.moveTo(center[0],center[1]);
-            template.graphics.lineTo(34.0, 8.5);
-            template.graphics.lineTo(34.0, 17.5);
-            template.graphics.lineTo(17.0, 26.0);
-            template.graphics.endFill();
-        }
-
-        if(diffs[D.DOWN]) {
-            template.graphics.beginFill(shade_flat);
-            template.graphics.moveTo(center[0],center[1]);
-            template.graphics.lineTo(8.5, 21.75);
-            template.graphics.lineTo(17.0, 26.0);
-            template.graphics.lineTo(25.5, 21.7);
-            template.graphics.endFill();
-        }*/
-
+            template.graphics.lineStyle(0.25,0x000000);
         for( poly in D.LEFT...(D.LEFT+8)) {
-            template.graphics.beginFill(opts.base_color+poly*2);
-            template.graphics.moveTo(center[0],center[1]);
             var node_1 = poly & 7;
             var node_2 = (poly + 1) & 7;
+            template.graphics.beginFill(shader(opts.base_color,diffs[node_1],diffs[node_2],poly));
+            template.graphics.moveTo(center[0],center[1]);
             template.graphics.lineTo(vertices[node_1][0], vertices[node_1][1]);
             template.graphics.lineTo(vertices[node_2][0], vertices[node_2][1]);
             template.graphics.endFill();
         }
         bmd.draw(template);
         return bmd;
-        //top_template = new flash.display.Bitmap(bmd);
     }
 }
 
@@ -257,15 +332,8 @@ class RenderedTilePool {
         if(rendered.exists(key)) return rendered.get(key);
         else {
             var bmd = opts.top_renderer(opts);
-            //var cbmd = opts.col_renderer(opts);
-            //var bmd = new BitmapData(34,126,true,0x000000);
-            //for( i in 18...bmd.height ) {
-            //    bmd.copyPixels(cbmd, cbmd.rect, new flash.geom.Point(0,i));
-            //}
-            //bmd.copyPixels(tbmd, tbmd.rect, new flash.geom.Point(0,0),null,null,true);
             rendered.set(key, bmd);
             return bmd;
         }
     }
-
 }

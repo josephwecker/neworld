@@ -93,7 +93,7 @@ class ViewPort extends flash.display.Sprite { // For events
         if(sfchan != null) {
             var trans = sfchan.soundTransform;
             trans.volume = 1 - curr_height;
-            trace("VOL: "+trans.volume);
+            //trace("VOL: "+trans.volume);
             sfchan.soundTransform = trans;
         }
     }
@@ -113,7 +113,7 @@ class ViewPort extends flash.display.Sprite { // For events
     function maybe_fullscreen(e : flash.events.KeyboardEvent) {
         try {
             if(e.keyCode == 70) {
-                trace("Toggling fullscreen");
+                //trace("Toggling fullscreen");
                 if(stage.displayState == flash.display.StageDisplayState.NORMAL)
                     stage.displayState = flash.display.StageDisplayState.FULL_SCREEN;
                 else stage.displayState = flash.display.StageDisplayState.NORMAL;
@@ -163,14 +163,14 @@ class ViewPort extends flash.display.Sprite { // For events
             }
         }
 
-        trace([ 'tile:        ' + tile.type,
+        /*trace([ 'tile:        ' + tile.type,
                 'vp_center_x: ' + vp_center_x,
                 'vp_center_y: ' + vp_center_y,
                 'up_tiles:    ' + up_tiles,
                 'over_tiles:  ' + over_tiles,
                 'vx:          ' + vx,
                 'vy:          ' + vy,
-                ].join("\n"));
+                ].join("\n"));*/
 
         view_data.setPixel(vp_center_x, vp_center_y, 0x000000);
         view_data.setPixel(vp_center_x+1, vp_center_y + 1, 0x00ff00);

@@ -35,15 +35,15 @@ class SampleMap {
     }
 
     function fill_maps() {
-        var bmd = new BitmapData(400, 400, false, 0);
+        var bmd = new BitmapData(100, 100, false, 0);
         rp.fill(bmd, X, Y, 0, BASE, GAIN, OFFSET, true);
         data.push(bmd);  // Base bedrock height
-        
+
         for(i in 1...3) {
-            bmd = new BitmapData(400, 400, false, 0);
+            bmd = new BitmapData(100, 100, false, 0);
             rp.fill(bmd, X, Y, 0, BASE + (i / 100), GAIN, OFFSET - (i / 5), true);
             data.push(bmd);
-            bmd = new BitmapData(400, 400, false, 0);
+            bmd = new BitmapData(100, 100, false, 0);
             rp.fill(bmd, X, Y, 0, BASE + (i / 75), GAIN, OFFSET - (i / 7.5), true);
             data.push(bmd);
         }
