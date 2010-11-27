@@ -34,4 +34,4 @@ mv utils/temploc ~/bin/  # Ditto
 #
 # sudo brew install asciidoc
 #
-##### Make sure and have a look at http://www.methods.co.nz/asciidoc/asciidoc.css-embedded.html for syntax
+##### Make sure and have a look at http://www.methods.co.nz/asciidoc/asciidoc.css-embedded.html for syntax and https://github.com/github/gollum for more info on links and gollum in general
