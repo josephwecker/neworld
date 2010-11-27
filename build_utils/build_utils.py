@@ -58,9 +58,8 @@ def mkdir(*path):
 def rmdir(*path):
     run('rm', '-rf', p(*path))
 
-def haxe(name, libs=[], resources=[], assets=[]):
+def haxe(name, libs=[], resources=[], assets=[], doc=False):
     cmd = ['haxe',
-            '-main', name,
             [['-cp',s] for s in sources],
             '-swf9', 'swfs/'+ name.lower() + '.swf',
             '-swf-version', 10,
@@ -69,7 +68,25 @@ def haxe(name, libs=[], resources=[], assets=[]):
             [['-lib',l] for l in libs],
             [['-swf-lib','.tmp/%s.swf' % a] for a in assets],
             [['-resource',r] for r in resources]]
-    run(cmd)
+    compile_cmd = cmd + ['-main', name]
+    run(compile_cmd)
+    if doc:
+        xml_loc = '.tmp/%s_doc.xml' % name
+        out_dir = "doc/system/%s" % name
+        doc_cmd = cmd + ['-xml', xml_loc, name]
+        run(doc_cmd)
+        mkdir(out_dir)
+        run(["chxdoc",
+             "-o", p(out_dir),
+             "--templateDir=build_utils/doc_template",
+             "--installTemplate=true",
+             "--developer=true",
+             "--generateTodoFile=true",
+             "--showTodoTags=true",
+             "--title=NEWORLD",
+             "--subtitle=%s" % name,
+             "--tmpDir=.tmp",
+             xml_loc])
 
 ASSET_MAP = {'png': ['flash.display.Bitmap',    'bitmap'],
              'swf': ['flash.display.MovieClip', 'clip'],
