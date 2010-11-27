@@ -1,5 +1,7 @@
 package neworld;
 
+import Type;
+
 class H<T> implements Dynamic<T>, extends Hash<T> {
     public function new(?in_arr) {
         super();

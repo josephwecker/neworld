@@ -31,12 +31,12 @@ class Column {
 
     // Position and neighbors
     var world   :World;
-    var world_x :Float, world_y :Float;
-    var col_x   :UInt,  col_y   :UInt;
+    var world_x :Float; var world_y :Float;
+    var col_x   :UInt;  var col_y   :UInt;
 
-    var n_nw    :Column, n_n    :Column, n_ne    :Column;
-    var n_w     :Column,                 n_e     :Column;
-    var n_sw    :Column, n_s    :Column, n_se    :Column;
+    var n_nw    :Column; var n_n    :Column; var n_ne    :Column;
+    var n_w     :Column;                     var n_e     :Column;
+    var n_sw    :Column; var n_s    :Column; var n_se    :Column;
 
     public var total_height (get_total_height, null) : Int;
 
@@ -44,7 +44,7 @@ class Column {
         top_layer = null;
     }
 
-    public function next(dir :Int, ?relative_to :Int = null) :Column {
+    public function next(dir :Int, ?relative_to :Null<Int> = null) :Column {
         if(dir > 7) {
             if(relative_to == null) relative_to = D.orientation;
             dir = (dir + relative_to) % 8;
@@ -84,11 +84,11 @@ class Column {
         return res;
     }
 
-    public function move_by(dir, times) {
+    /*public function move_by(dir, times) {
         var r = this;
         for(i in 0...times) r = r.n[D.rel(dir)];
         return r;
-    }
+    }*/
 }
 
 class Layer {
