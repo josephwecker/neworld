@@ -1,9 +1,0 @@
-transparency 		- 0 	-	?
-tile back (top right) 	- 81 	- 36 109 36
-tile left (top left) 	- 80 	- 73 146 73
-tile right (bot right)	- 79 	- 109 182 109
-tile bot (bot left) 	- 78 	- 146 255 146
-tile face 		- 230	- 0 109 36
-col face (left) 	- 185 	- 146 73 36
-col side (right) 	- 186	- 109 36 0
-col edge 		- 184	- 182 109 73

@@ -1,0 +1,29 @@
+
+
+Features:
+  * Relatively endless
+  * Scale very straight-forward
+  * Know values JIT
+  * JIT erosions
+  * Boulders, rocks, etc.
+  * Easily built-in caves etc.
+
+Ideas:
+  * Change parameters based on earlier noise function
+    (for example, the gain, sharpness, etc.)
+  * Change % that an algorithm is used based on earlier noise function
+  * Plataues - clamp at different levels based on earlier noise function
+  * Fault-line algorithm somewhere...
+
+  * Stop auto-clamping-  Just record min / max.... or not even that, since the
+    values are going to be transformed into "columns" anyway...
+
+
+  * Perlin or simplex
+  * Ridged Perlin
+  * Fault-line
+  * Recursive erosion (see near bottom of http://www.nullpointer.co.uk/content/?p=74 )
+
+
+ThermalErosion((Simplex() * FaultLine()) + (Simplex2() * RidgedPerlin()))
+

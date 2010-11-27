@@ -1,0 +1,230 @@
+; ------------------------------------------------------------
+; Example for using Tile Studio with haXe and SWFMill
+; 
+; To compile:
+;   swfmill simple <ProjectName>Res.xml <ProjectName>Res.swf
+;
+; For example project Demo.tsp:
+;   swfmill simple DemoRes.xml DemoRes.swf
+;
+; Version 3.0, july 2008
+; Mike Wiering (mike@wieringsoftware.nl)
+; ------------------------------------------------------------
+
+#tileset
+#tilebitmap gfx\\<TileSetIdentifier>.png 800
+#end tilebitmap
+#end tileset
+
+; ------------------------------------------------------------
+; Resource file for AS3
+; ------------------------------------------------------------
+
+#file <ProjectName>Res.xml
+;\<?xml version="1.0" encoding="iso-8859-1"?>
+;\<movie width="480" height="360" framerate="100">
+\<movie>
+;  \<background color="#000000"/>
+;  \<frame>
+    \<library>
+#tileset
+      \<bitmap id="<TileSetIdentifier>" name="<TileSetIdentifier>" import=".\\gfx\\<TileSetIdentifier>.png"/>
+#end tileset
+#list Sounds "\n" "\n" ""
+      \<sound id="<Item>_mp3" import=".\\snd\\<Item>.mp3" />
+#end list
+    \</library>
+;  \</frame>
+\</movie>
+#end file
+
+; ------------------------------------------------------------
+
+;#file gfx\\MapData.hx
+;class MapData
+;{
+;  public var Identifier: String;
+;  public var MapW: Int;
+;  public var MapH: Int;
+;
+;  public function mapdata (): Array\<Array\<Int>>
+;  {
+;    return [[0]];
+;  }
+;
+;  public function boundmapdata (): Array\<Array\<Int>>
+;  {
+;    return [[0]];
+;  }
+;
+;}
+;#end file
+
+; --------------------------------------------------------
+
+#tileset
+#file gfx\\<TileSetIdentifier>Info.hx
+
+import gamelib2d.TileSetData;
+
+##if flash9
+import flash.display.Bitmap;
+import flash.display.BitmapData;
+
+class <TileSetIdentifier> extends BitmapData
+{
+    public function new()
+    {
+        super(0,0);
+    }
+}
+##end
+
+class <TileSetIdentifier>Info extends TileSetData
+{
+  public function new ()
+  {
+    name = "<TileSetIdentifier>";
+    tileW = <TileWidth>;
+    tileH = <TileHeight>;
+    numTilesX = <HorizontalTileCount>;
+    numTilesY = <VerticalTileCount>;
+    numTiles = <TileCount>;
+    numSequences = <SequenceCount>;
+  }
+
+##if flash9
+  override public function getBitmap (): Bitmap
+  {
+    var bd: BitmapData;
+    bd = new <TileSetIdentifier> ();
+    return new flash.display.Bitmap (bd, flash.display.PixelSnapping.AUTO, true);
+  }
+##end
+
+  override public function seq () : Array\<Array\<Int>> {
+  return [
+#sequence ","
+#sequencedata  "\n   ["  ", "  "]"
+<TileNumber>,<FrameCount>,<BoundMapValue>
+#end sequencedata
+#end sequence ];
+  }
+}
+
+#end file
+
+; ----- maps -----
+
+#map
+#file gfx\\<TileSetIdentifier><MapIdentifier>Info.hx
+
+import gamelib2d.MapData;
+
+class <TileSetIdentifier><MapIdentifier>Info extends MapData
+{
+  public function new ()
+  {
+    name = "<MapIdentifier>";
+    mapW = <MapWidth>;
+    mapH = <MapHeight>;
+  }
+
+  override public function mapdata () : Array\<Array\<Int>> {
+  return 
+#mapdata  "\n  [["  ","  ",\n    "  "],\n   ["  "]];"
+<TileNumber:"%3d">
+#end mapdata 
+  }
+
+  override public function boundmapdata () : Array\<Array\<Int>> {
+  return 
+#mapdata  "\n  [["  ","  ",\n    "  "],\n   ["  "]];"
+<BoundMapValue:"%3d">
+#end mapdata 
+  }
+}
+
+#end file
+
+#end map
+#end tileset
+
+; ------------------------------------------------------------
+; For sound, create a list: [Sounds]
+; ------------------------------------------------------------
+
+#file snd\\<ProjectName>Snd.hx
+
+##if flash9
+import flash.media.Sound;
+import flash.media.SoundChannel;
+import flash.media.SoundLoaderContext;
+##else flash8
+import flash.Sound;
+##end
+
+enum <ProjectName>Sound
+{
+#list Sounds "\n" "\n" ""
+  <Item>;
+#end list
+}
+
+##if flash9
+#list Sounds "\n" "\n" ""
+class <Item>_mp3 extends Sound { }
+#end list
+##end
+
+class <ProjectName>Snd
+{
+  public static var enabled: Bool;
+
+##if flash9
+#list Sounds "\n" "\n" ""
+  public static var snd_<Item>: <Item>_mp3;
+#end list
+##else flash8
+#list Sounds "\n" "\n" ""
+  public static var snd_<Item>: Sound = new Sound ();
+#end list
+##end
+
+  public static function init ()
+  {
+##if flash9
+#list Sounds "\n" "\n" ""
+    snd_<Item> = new <Item>_mp3 ();
+#end list
+##else flash8
+#list Sounds "\n" "\n" ""
+    snd_<Item>.attachSound ("<Item>_mp3");
+#end list
+##end
+  }
+
+  public static function play (s: <ProjectName>Sound): SoundChannel
+  {
+    var sc: SoundChannel = null;
+    if (enabled)
+      switch (s)
+      {
+##if flash9
+#list Sounds "\n" "\n" ""
+        case <Item>: sc = snd_<Item>.play ();
+#end list
+##else flash8
+#list Sounds "\n" "\n" ""
+        case <Item>: sc = snd_<Item>.start ();
+#end list
+##end
+      }
+    return sc;
+  }
+
+}
+
+#end file
+
+; ------------------------------------------------------------

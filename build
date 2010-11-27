@@ -9,6 +9,10 @@ def build():
     mkdir('swfs')
     experiments()
     game()
+    print("Done")
+    print("-----------------------------------------------------------------------------")
+    print("Find documentation at file://%s" % p(ROOT_DIR, "doc", "index.html"))
+    print("-----------------------------------------------------------------------------")
 
 def clean():
     os.system('rm swfs/*')

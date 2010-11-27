@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="iso-8859-1"?>
+<movie width="480" height="360" framerate="100">
+	<background color="#000000"/>
+	<frame>
+		<include file="ScrollRes9.xml" />
+	</frame> 
+</movie>
