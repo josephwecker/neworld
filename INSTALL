@@ -1,5 +1,5 @@
 
-# As of 11/6/2010
+# As of 11/26/2010
 
 # requires very latest haxe, neko, and haxelib
 http://haxe.org/doc/build/haxe_ubuntu_build
@@ -11,3 +11,11 @@ http://haxe.org/doc/haxelib/building_haxelib
 haxelib install format
 haxelib install polygonal
 haxelib install sandy
+
+# Also requires chxdoc for documentation
+svn checkout http://caffeine-hx.googlecode.com/svn/trunk/ caffeine
+cd caffeine
+make
+nekotools boot utils/temploc.n
+mv chxdoc ~/bin         # Or symlink it, or to a different directory
+mv utils/temploc ~/bin  # Ditto
