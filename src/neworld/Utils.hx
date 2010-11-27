@@ -12,6 +12,12 @@ class Utils {
         for( i in 0...arr.length ) output[i]=arr[i];
         return output;
     }
+    
+    inline public static function toUIntVector(arr:Array<UInt>) :flash.Vector<UInt> {
+        var output = new flash.Vector<UInt>(arr.length, true);
+        for( i in 0...arr.length ) output[i]=arr[i];
+        return output;
+    }
 }
 
 class H<T> implements Dynamic<T>, extends Hash<T> {
