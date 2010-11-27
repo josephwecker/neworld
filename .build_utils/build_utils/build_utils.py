@@ -46,7 +46,9 @@ def p(*args):
     return os.path.normpath(os.path.join(*args))
 
 BUILD_UTIL_DIR = os.path.abspath(os.path.dirname(__file__) + '/')
-ROOT_DIR = p(BUILD_UTIL_DIR, '..')
+ROOT_DIR = p(BUILD_UTIL_DIR, '..', '..')
+CLIENT_ROOT_DIR = p(BUILD_UTIL_DIR, '..', '..', 'client')
+SERVER_ROOT_DIR = p(BUILD_UTIL_DIR, '..', '..', 'server')
 
 HAXE_LIBS = []
 HAXE_RESOURCES = []
@@ -72,18 +74,18 @@ def haxe(name, libs=[], resources=[], assets=[], doc=False):
     run(compile_cmd)
     if doc:
         xml_loc = '.tmp/%s_doc.xml' % name
-        out_dir = "doc/system/%s" % name
+        out_dir = "../doc/system/%s" % name
         doc_cmd = cmd + ['-xml', xml_loc, name]
         run(doc_cmd)
         mkdir(out_dir)
         run(["chxdoc",
              "-o", p(out_dir),
-             "--templateDir=build_utils/doc_template",
+             "--templateDir=../.build_utils/build_utils/doc_template",
              "--installTemplate=true",
              "--developer=true",
              "--generateTodoFile=true",
              "--showTodoTags=true",
-             "--title=NEWORLD",
+             "--title=Neworld",
              "--subtitle=%s" % name,
              "--tmpDir=.tmp",
              xml_loc])
@@ -119,6 +121,6 @@ def build_assets(import_name='Assets', file_globs=[]):
 #------------------------------------------------------
 # Make sure we're in the right working directory to begin with (possibly not
 # needed and possibly even interferes w/ fabricate later, we'll see)
-os.chdir(ROOT_DIR)
+os.chdir(CLIENT_ROOT_DIR)
 
 
