@@ -45,5 +45,8 @@ def experiments():
         'assets.terrain.Display'])
     haxe('experiments.particles.ParticleRender', libs=['polygonal'])
     haxe('experiments.triangles.Test')
+    haxe('experiments.meshexplorer.Explorer', libs=['polygonal'],
+        assets=['assets.creatures.Display', 'assets.creatures.Sounds',
+        'assets.terrain.Display'])
 
 main()
