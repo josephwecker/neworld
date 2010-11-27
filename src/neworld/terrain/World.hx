@@ -12,6 +12,10 @@
  *
  */
 
+/**
+ * Interface for the world from the server...&nbsp; or something.
+ */
+
 package neworld.terrain;
 
 import noise.Simplex;
@@ -25,12 +29,14 @@ import neworld.terrain.Column;
  * segments as needed by other parts of the simulation.
  *
  * Terrain creation basics:
+ *   <code>
  *   [Continent]Simplex(?)() *
  *     HydrolicErosion(ThermalErosion(
  *        (Simplex() * FaultLine()) +
  *        (Simplex2() * Ridged()) +
  *        (Simplex3() * Clamper() * Ridged())))
  *   Several layers / Strata, then weather, then water.
+ *   </code>
  *
  * Scales:
  *   Continent  [65,536m | 262,144t](1024 | 2^10)
@@ -38,6 +44,10 @@ import neworld.terrain.Column;
  *   ActiveView [    64m |     256t](   1 | 2^ 0)
  *   Viewport   [ ~  32m |     128t](   1 | 2^ 0)
  *
+ * @param kdfjweio
+ * @see kjfe
+ * @return fejiwo jfiewo
+ * {@link RidgedPerlin}. Ridged Perlin
  * @todo
  *   - Initial point?
  */
@@ -48,8 +58,8 @@ class World {
      * is essentially the random seed for all the physical world building
      * algorithms.
      */
-    public function new(world_number=null) {
-        if(seed == null) seed = Std.int(Math.random() * 0x7FFFFFF);
+    public function new(?world_number :Null<Int>=null) {
+        if(world_number == -1) world_number = Std.int(Math.random() * 0x7FFFFFF);
 
     }
 
@@ -61,7 +71,7 @@ class World {
      * automatically incrementing higher scaled ones when necessary.
      */
     public function get_col(reference_col :Column, direction :Int) {
-
+        return reference_col;
     }
 
 
@@ -75,7 +85,7 @@ class D {
     static var _instance = new D();
     var _orientation :Int;
     public static var orientation(get_orientation, set_orientation) :Int;
-    public static var tile_type(get_tile_type, null) :TileType;
+    //public static var tile_type(get_tile_type, null) :TileType;
 
     public inline static var NORTH     = 0;
     public inline static var NORTHEAST = 1;
@@ -95,10 +105,10 @@ class D {
     public inline static var LEFT      = 14;
     public inline static var UPLEFT    = 15;
     private function new() {_orientation = NORTH;}
-    static function get_tile_type() :TileType {
+    /*static function get_tile_type() :TileType {
         if(_instance._orientation & 1 == 1) return isometric;
         else return dimetric;
-    }
+    }*/
     static function get_orientation() :Int {return _instance._orientation;}
     static function set_orientation(o:Int) :Int {_instance._orientation = o;return o;}
 }
