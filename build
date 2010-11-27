@@ -32,5 +32,6 @@ def experiments():
         assets=['assets.creatures.Display', 'assets.creatures.Sounds',
         'assets.terrain.Display'])
     haxe('experiments.particles.ParticleRender', libs=['polygonal'])
+    haxe('experiments.triangles.Test')
 
 main()

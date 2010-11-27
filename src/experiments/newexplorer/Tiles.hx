@@ -115,26 +115,20 @@ class TileRenderer {
         var shade_NW = base- 0x111111;
 
         if( tri == D.LEFT ) {
-            //v1 = vect_2;
-            //v2 = vect_2;
-            v1 = vect_1;
-            v2 = 0;
+            v1 = vect_2;
+            v2 = vect_2;
             v3 = vect_1;
             v4 = 0;
         } else if( tri == D.UPLEFT ) {
-            //
-            v1 = vect_2;
+            v1 = vect_1;
             v2 = vect_2;
-            //
-            v3 = 0;
+            v3 = vect_1;
             v4 = 0;
         } else if( tri == D.UP ) {
             v1 = vect_1;
-            //
-            v2 = vect_1;
+            v2 = vect_2;
             v3 = 0;
-            //
-            v4 = 0;
+            v4 = vect_2;
         } else if( tri == D.UPRIGHT ) {
             //
             v1 = 0;
