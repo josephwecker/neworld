@@ -16,8 +16,7 @@ import haxe.macro.Context;
 class Column {
     var top_layer : Layer;
     public var n : Array<Column>;
-    public var xe :Bool;
-    public var ye :Bool;
+    public var cross :Bool;
 
     public var total_height (get_total_height, null) : Int;
 
@@ -31,8 +30,7 @@ class Column {
         next_layer = next_layer.link_down(new Layer(data[3].getPixel(px,py), air));
         next_layer.link_down(new Layer(data[4].getPixel(px,py), bedrock));
         
-        xe = ((px % 2) == 0);
-        ye = ((py % 2) == 0);
+        cross = (((px % 2) == 0) == ((py % 2) == 0));
     }
 
     public function describe() {

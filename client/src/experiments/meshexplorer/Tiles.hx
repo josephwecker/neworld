@@ -23,9 +23,10 @@ class TileRenderer {
     public var height    :Int;
     // TODO: skew / drift for dimetric
 
-    var col_template     :flash.display.Bitmap;
+    var template         :flash.display.Shape;
     var render_pool      :RenderedTilePool;
     var person           :HumanoidSm;
+
 
     public function new(type, ax, ay, ox, w, h) {
         this.type = type;
@@ -59,22 +60,20 @@ class TileRenderer {
             norm_hdiff = real_col_height(neighbor.total_height) - this_height;
             key += norm_hdiff;
         }
+        key += (col.cross);
 
         var attribs :RenderOpts = {
             key:            key,
             base_color:     color,
-            col_template:   col_template,
             width:          width,
             height:         height,
             top_renderer:   this.tile_render_top,
-            col_renderer:   this.tile_render_col,
             column:         col
             };
 
         var bmd = render_pool.get_rendered(attribs);
         dat.copyPixels(bmd, bmd.rect, new flash.geom.Point(x,y - 9));
         if(hi) {
-            //trace("x is "+col.xe+", and y is "+col.ye);
             dat.copyPixels(person.bitmapData, person.bitmapData.rect,
                 new flash.geom.Point(x + ((width - person.width) / 2),
                                      y + (height / 2) - person.height +50));
@@ -83,25 +82,48 @@ class TileRenderer {
 
     public function tile_render_top(opts:RenderOpts) : BitmapData {return null;}
 
-    public function tile_render_col(opts:RenderOpts) : BitmapData {
-        var dat = opts.col_template.bitmapData;
-        var stamp = dat.getVector(dat.rect);
+    public function draw_rectangle( opts:RenderOpts, vertices:Array<Array<Int>> ) {
+        template.graphics.lineStyle(0.25,0x008800);
+        if( opts.column.cross ) {
+            template.graphics.beginFill(opts.base_color);
+            template.graphics.moveTo(vertices[0][0], vertices[0][1]);
+            template.graphics.lineTo(vertices[1][0], vertices[1][1]);
+            template.graphics.lineTo(vertices[2][0], vertices[2][1]);
+            template.graphics.lineTo(vertices[0][0], vertices[0][1]);
+            template.graphics.endFill();
 
-        var bmd = new BitmapData(dat.width, dat.height, true, 0);
-        bmd.setVector(bmd.rect, stamp);
-        return bmd;
+            template.graphics.beginFill(opts.base_color);
+            template.graphics.moveTo(vertices[2][0], vertices[2][1]);
+            template.graphics.lineTo(vertices[1][0], vertices[1][1]);
+            template.graphics.lineTo(vertices[3][0], vertices[3][1]);
+            template.graphics.lineTo(vertices[2][0], vertices[2][1]);
+            template.graphics.endFill();
+        } else {
+            template.graphics.beginFill(opts.base_color);
+            template.graphics.moveTo(vertices[0][0], vertices[0][1]);
+            template.graphics.lineTo(vertices[1][0], vertices[1][1]);
+            template.graphics.lineTo(vertices[3][0], vertices[3][1]);
+            template.graphics.lineTo(vertices[0][0], vertices[0][1]);
+            template.graphics.endFill();
+
+            template.graphics.beginFill(opts.base_color);
+            template.graphics.moveTo(vertices[0][0], vertices[0][1]);
+            template.graphics.lineTo(vertices[2][0], vertices[2][1]);
+            template.graphics.lineTo(vertices[3][0], vertices[3][1]);
+            template.graphics.lineTo(vertices[0][0], vertices[0][1]);
+            template.graphics.endFill();
+        }
     }
 }
 
 class DimetricTile extends TileRenderer {
     public function new() {
-        col_template = new DimCol();
-                     //  ax  ay  ox   w   h
+                    //  ax  ay  ox   w   h
         super(dimetric, 24, 12,  0, 24, 12);
      }
 
     public override function tile_render_top(opts :RenderOpts) :BitmapData {
-        var template = new flash.display.Shape();
+        template = new flash.display.Shape();
 
         var verts = new Array<Int>();
         for(neighbor_num in D.RIGHT...(D.RIGHT+3)) {
@@ -113,42 +135,13 @@ class DimetricTile extends TileRenderer {
 
         var vertices = new Array<Array<Int>>();
         vertices[0] = [ 0     , 0      + 50           ];
-        vertices[1] = [ width , 0      + 50 - verts[0] ];
-        vertices[2] = [ 0     , height + 50 - verts[1] ];
-        vertices[3] = [ width , height + 50 - verts[2] ];
+        vertices[1] = [ width , 0      + 50 ];//- verts[0] ];
+        vertices[2] = [ 0     , height + 50 ];//- verts[1] ];
+        vertices[3] = [ width , height + 50 ];//- verts[2] ];
 
         var bmd = new BitmapData(width,height+100,true,0x000000);
-        template.graphics.lineStyle(0.25,0x008800);
         
-        if( opts.column.xe == opts.column.ye ) {
-            template.graphics.beginFill(opts.base_color);
-            template.graphics.moveTo(vertices[0][0], vertices[0][1]);
-            template.graphics.lineTo(vertices[1][0], vertices[1][1]);
-            template.graphics.lineTo(vertices[2][0], vertices[2][1]);
-            template.graphics.lineTo(vertices[0][0], vertices[0][1]);
-            template.graphics.endFill();
-
-            template.graphics.beginFill(opts.base_color);
-            template.graphics.moveTo(vertices[2][0], vertices[2][1]);
-            template.graphics.lineTo(vertices[1][0], vertices[1][1]);
-            template.graphics.lineTo(vertices[3][0], vertices[3][1]);
-            template.graphics.lineTo(vertices[2][0], vertices[2][1]);
-            template.graphics.endFill();
-        } else {
-            template.graphics.beginFill(opts.base_color);
-            template.graphics.moveTo(vertices[0][0], vertices[0][1]);
-            template.graphics.lineTo(vertices[1][0], vertices[1][1]);
-            template.graphics.lineTo(vertices[3][0], vertices[3][1]);
-            template.graphics.lineTo(vertices[0][0], vertices[0][1]);
-            template.graphics.endFill();
-
-            template.graphics.beginFill(opts.base_color);
-            template.graphics.moveTo(vertices[0][0], vertices[0][1]);
-            template.graphics.lineTo(vertices[2][0], vertices[2][1]);
-            template.graphics.lineTo(vertices[3][0], vertices[3][1]);
-            template.graphics.lineTo(vertices[0][0], vertices[0][1]);
-            template.graphics.endFill();
-        }
+        this.draw_rectangle(opts, vertices);
         
         bmd.draw(template);
         return bmd;
@@ -157,13 +150,12 @@ class DimetricTile extends TileRenderer {
 
 class IsometricTile extends TileRenderer {
     public function new() {
-        col_template = new IsoCol();
-                    //  ax  ay  ox   w   h
+                     //  ax  ay  ox   w   h
         super(isometric, 34, 9, 17, 34, 18);
     }
 
     public override function tile_render_top(opts :RenderOpts) :BitmapData {
-        var template = new flash.display.Shape();
+        template = new flash.display.Shape();
 
         var verts = new Array<Int>();
         for(neighbor_num in D.DOWNRIGHT...(D.DOWNRIGHT+3)) {
@@ -174,98 +166,30 @@ class IsometricTile extends TileRenderer {
         }
 
         var vertices = new Array<Array<Int>>();
-        vertices[0] = [ width>>1 , 0         + 50            ];
-        vertices[1] = [ width    , height>>1 + 50 - verts[0] ];
-        vertices[2] = [ width>>1 , height    + 50 - verts[1] ];
-        vertices[3] = [ 0        , height>>1 + 50 - verts[2] ];
+        vertices[0] = [ 17 , 0 + 50 ];
+        vertices[1] = [ 34 , 9 + 50 ];//- verts[0] ];
+        vertices[2] = [ 0  , 9 + 50 ];//- verts[2] ];
+        vertices[3] = [ 17 , 18    + 50 ];//- verts[1] ];
+        //vertices[0] = [ width>>2 , 0         + 50            ];
+        //vertices[1] = [ width    , height>>2 + 50 ];//- verts[0] ];
+        //vertices[2] = [ width>>2 , height    + 50 ];//- verts[1] ];
+        //vertices[3] = [ 0        , height>>2 + 50 ];//- verts[2] ];
 
         var bmd = new BitmapData(width,height+100,true,0x000000);
-        template.graphics.lineStyle(0.25,0x008800);
         
-        if( opts.column.xe == opts.column.ye ) {
-            template.graphics.beginFill(opts.base_color);
-            template.graphics.moveTo(vertices[0][0], vertices[0][1]);
-            template.graphics.lineTo(vertices[1][0], vertices[1][1]);
-            template.graphics.lineTo(vertices[2][0], vertices[2][1]);
-            template.graphics.lineTo(vertices[0][0], vertices[0][1]);
-            template.graphics.endFill();
-
-            template.graphics.beginFill(opts.base_color);
-            template.graphics.moveTo(vertices[2][0], vertices[2][1]);
-            template.graphics.lineTo(vertices[1][0], vertices[1][1]);
-            template.graphics.lineTo(vertices[3][0], vertices[3][1]);
-            template.graphics.lineTo(vertices[2][0], vertices[2][1]);
-            template.graphics.endFill();
-        } else {
-            template.graphics.beginFill(opts.base_color);
-            template.graphics.moveTo(vertices[0][0], vertices[0][1]);
-            template.graphics.lineTo(vertices[1][0], vertices[1][1]);
-            template.graphics.lineTo(vertices[3][0], vertices[3][1]);
-            template.graphics.lineTo(vertices[0][0], vertices[0][1]);
-            template.graphics.endFill();
-
-            template.graphics.beginFill(opts.base_color);
-            template.graphics.moveTo(vertices[0][0], vertices[0][1]);
-            template.graphics.lineTo(vertices[2][0], vertices[2][1]);
-            template.graphics.lineTo(vertices[3][0], vertices[3][1]);
-            template.graphics.lineTo(vertices[0][0], vertices[0][1]);
-            template.graphics.endFill();
-        }
+        this.draw_rectangle(opts, vertices);
         
         bmd.draw(template);
         return bmd;
- /*var template = new flash.display.Shape();
-        var center   = [width/2, height/2+50];
-        var color    = opts.base_color;
-
-        var diffs = new Array<Int>();
-        for(neighbor_num in D.LEFT...(D.LEFT+8)) {
-            var neighbor = opts.column.n[D.rel(neighbor_num)];
-            var norm_hdiff = real_col_height(neighbor.total_height) -
-                             real_col_height(opts.column.total_height);
-            diffs[neighbor_num & 7] = norm_hdiff>>1;
-        }
-
-        diffs[D.LEFT]  = (diffs[D.UPLEFT]   + diffs[D.LEFT]  + diffs[D.DOWNLEFT])>>1;
-        diffs[D.UP]    = (diffs[D.UPLEFT]   + diffs[D.UP]    + diffs[D.UPRIGHT])>>1;
-        diffs[D.RIGHT] = (diffs[D.UPRIGHT]  + diffs[D.RIGHT] + diffs[D.DOWNRIGHT])>>1;
-        diffs[D.DOWN]  = (diffs[D.DOWNRIGHT]+ diffs[D.DOWN]  + diffs[D.DOWNLEFT])>>1;
-
-        var vertices = new Array<Array<Float>>();
-        vertices[D.LEFT]      = [ 0.0       , height/2   + 50 - (diffs[D.LEFT])];
-        vertices[D.UPLEFT]    = [ width/4   , height/4   + 50 - (diffs[D.UPLEFT])];
-        vertices[D.UP]        = [ width/2   , 0.0        + 50 - (diffs[D.UP])];
-        vertices[D.UPRIGHT]   = [ width*3/4 , height/4   + 50 - (diffs[D.UPRIGHT])];
-        vertices[D.RIGHT]     = [ width     , height/2   + 50 - (diffs[D.RIGHT])];
-        vertices[D.DOWNRIGHT] = [ width*3/4 , height*3/4 + 50 - (diffs[D.DOWNRIGHT])];
-        vertices[D.DOWN]      = [ width/2   , height     + 50 - (diffs[D.DOWN])];
-        vertices[D.DOWNLEFT]  = [ width/4   , height*3/4 + 50 - (diffs[D.DOWNLEFT])];
-
-        var bmd = new BitmapData(width,height+100,true,0x000000);
-
-            template.graphics.lineStyle(0.25,0x000000);
-        for( poly in D.LEFT...(D.LEFT+8)) {
-            var node_1 = poly & 7;
-            var node_2 = (poly + 1) & 7;
-            template.graphics.beginFill(opts.base_color);
-            template.graphics.moveTo(center[0],center[1]);
-            template.graphics.lineTo(vertices[node_1][0], vertices[node_1][1]);
-            template.graphics.lineTo(vertices[node_2][0], vertices[node_2][1]);
-            template.graphics.endFill();
-        }
-        bmd.draw(template);
-        return bmd;*/
     }
 }
 
 typedef RenderOpts = {
     var key            :String;
     var base_color     :UInt;
-    var col_template   :flash.display.Bitmap;
     var width          :UInt;
     var height         :UInt;
     var top_renderer   :RenderOpts->BitmapData;
-    var col_renderer   :RenderOpts->BitmapData;
     var column         :Column;
 }
 
