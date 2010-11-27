@@ -16,6 +16,14 @@
 				<p>There are no pending TODO tasks.</p>
 	::end::
 ::end::
+				<ul class="overviewp">
+					::foreach p config.allPackages::
+						::if p.full.split(".")[0] == config.subtitle.split(".")[0]::
+						<li class="relevant"><a href="::p.packageUri::"
+							target="classFrame">::p.full::</a></li>
+						::end::
+					::end::
+				</ul>
 			</div>
 		</div>
 	</body>

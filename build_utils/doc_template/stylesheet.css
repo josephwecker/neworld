@@ -86,8 +86,28 @@ a, a:active, a:visited
 	margin: 0px;
 }
 
+.relevant
+{
+	padding-top: 10px;
+	padding-bottom: 10px;
+	border-bottom: 1px dashed #BBB;
+}
+.relevant a
+{
+	color: #883311;
+	font-size: 14pt;
+}
+
+.overviewp
+{
+	border-top: 1px dashed #BBB;
+	padding-bottom: 20px;
+	margin: 20px;
+}
+
 ul.types, ul.packages, #packages-header ul
 {
+	list-style: none;
 	margin: 5px 5px 10px 5px;
 }
 
@@ -269,13 +289,15 @@ pre
 	padding: 4px 16px;
 	font-weight: bold;
 }
-#packages-frame li, #types-frame li
+/*#packages-frame li, #types-frame li*/
+li, #types-frame li
 {
 	background-repeat: no-repeat;
 	min-height: 16px;
 	padding-left: 18px;
 }
-#packages-frame ul.packages li
+/*#packages-frame ul.packages li*/
+ul.packages li
 {
 	background-image: url(images/package.png);
 }
