@@ -31,15 +31,8 @@ class Column {
         next_layer = next_layer.link_down(new Layer(data[3].getPixel(px,py), air));
         next_layer.link_down(new Layer(data[4].getPixel(px,py), bedrock));
         
-        if( px%2==0 ) {
-            xe = true;
-        } else {
-            xe = false;
-        } if( py%2==0 ) {
-            ye=true;
-        } else {
-            ye=false;
-        }
+        xe = ((px % 2) == 0);
+        ye = ((py % 2) == 0);
     }
 
     public function describe() {
