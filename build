@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 from build_utils import *
+import os
 
 def build():
     build_assets('assets.creatures.Display', ['assets/creatures/display/*'])
@@ -7,9 +8,15 @@ def build():
     build_assets('assets.terrain.Display',   ['assets/terrain/display/*'])
     mkdir('swfs')
     experiments()
+    game()
 
 def clean():
-    rmdir('swfs')
+    os.system('rm swfs/*')
+    os.system('rm .tmp/*')
+    os.system('rm -rf doc/system/*')
+
+def game():
+    haxe('neworld.Neworld', libs=['polygonal'], doc=True)
 
 def faults():
     haxe('experiments.Faults')
