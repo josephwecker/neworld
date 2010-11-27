@@ -80,12 +80,12 @@ def haxe(name, libs=[], resources=[], assets=[], doc=False):
         mkdir(out_dir)
         run(["chxdoc",
              "-o", p(out_dir),
-             "--templateDir=../build_utils/doc_template",
+             "--templateDir=../.build_utils/build_utils/doc_template",
              "--installTemplate=true",
              "--developer=true",
              "--generateTodoFile=true",
              "--showTodoTags=true",
-             "--title=NEWORLD",
+             "--title=Neworld",
              "--subtitle=%s" % name,
              "--tmpDir=.tmp",
              xml_loc])
