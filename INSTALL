@@ -14,7 +14,7 @@ haxelib install sandy
 
 # Also requires chxdoc for documentation
 svn checkout http://caffeine-hx.googlecode.com/svn/trunk/ caffeine
-cd caffeine
+cd caffeine/projects/chxdoc
 make
 nekotools boot utils/temploc.n
 mv chxdoc ~/bin         # Or symlink it, or to a different directory
