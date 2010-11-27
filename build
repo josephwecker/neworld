@@ -1,6 +1,7 @@
 #!/usr/bin/env python
+import os, sys
+sys.path.append('./.build_utils')
 from build_utils import *
-import os
 
 def build():
     build_assets('assets.creatures.Display', ['assets/creatures/display/*'])

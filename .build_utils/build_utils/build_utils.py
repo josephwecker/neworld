@@ -46,9 +46,9 @@ def p(*args):
     return os.path.normpath(os.path.join(*args))
 
 BUILD_UTIL_DIR = os.path.abspath(os.path.dirname(__file__) + '/')
-ROOT_DIR = p(BUILD_UTIL_DIR, '..')
-CLIENT_ROOT_DIR = p(BUILD_UTIL_DIR, '..', 'client')
-SERVER_ROOT_DIR = p(BUILD_UTIL_DIR, '..', 'server')
+ROOT_DIR = p(BUILD_UTIL_DIR, '..', '..')
+CLIENT_ROOT_DIR = p(BUILD_UTIL_DIR, '..', '..', 'client')
+SERVER_ROOT_DIR = p(BUILD_UTIL_DIR, '..', '..', 'server')
 
 HAXE_LIBS = []
 HAXE_RESOURCES = []
