@@ -99,3 +99,92 @@ Armor
   - more important the _fit_ (esp. for solid armor)- not so much "skill" in
     using the armor-  really very minimal skill involved- mostly material and
     fit- with secondary how long it takes to put on and take off.
+
+
+-------
+
+Probable vs. Observable vs. Observed
+
+Probable- server gives some basic data about terrain (for example) based on the
+fact that the player will be able to guess, for example, the slipperiness or
+roughness (for movement speed) of a given area)
+
+Observable- if the player chooses to look at something more carefully, or is
+focused on something due to threat, or walks on part of the terrain, certain
+attributes are _available_, even if not actually sent right away.
+
+Observed- when the observable is noticed and/or detailed and real info is
+loaded in (actual roughness of a patch, etc.)
+
+-------
+
+Ray-tracing
+
+- possibly don't need to use "reflected" ray at all, nor transmitted rays- just
+  shadow ones (hm, possibly needed for "wet"- esp reflected...)
+- Shadow rays sent toward all light sources
+- Limited depth- easier to bound objects
+- Modified z-buffer for first hit
+
+- Shoot rays from the light-source instead: basically just shading
+
+- Angles are approximate- guessed- probability of full shadow, partial shadow,
+  etc.- then just pick random spots if partial...
+
+- If blob is "hit"- no need to calculate any further...
+
+- Blobs hit by light vs not, unioned with blobs intersecting w/ viewpoint or
+  not, with intrinsics applied, then positioned correctly based on viewpoint
+  via geometric transformation (or maybe that's done first).  Maybe every
+  blob has several sets of vertices for easy calculation- one against the eye
+  and another for each light source (and then ambient added to lighting)
+
+- "Fractal"-like shading- apply algorithm to whole scene as if the columns were
+  pixel-sized blobs- then progressively go in depending on detail levels.
+
+http://en.wikipedia.org/wiki/Photon_mapping
+http://www.siggraph.org/education/materials/HyperGraph/raytrace/rtrace0.htm
+http://www.baylee-online.net/Projects/Raytracing/Algorithms/Spectral-Rendering/Spectral-Ray-Tracing
+http://fuzzyphoton.tripod.com/rtalgo.htm
+http://www.graphics.stanford.edu/courses/cs348b-04/lectures/lecture2/
+http://www.graphics.stanford.edu/courses/cs348b-05/lectures/lecture2/
+-----
+
+* Gravity attributes of a column
+
+-----
+
+Possible simplifications:
+
+- sheer faces in only 8 (or some other limit) directions - but always nearest
+  sheer face- no qbert
+- slopes in only so many angles
+
+
+- Sheers at a couple of different angles (one being straight up)
+
+So always a well-defined flat/sloped -> steep transition and well-defined
+texture parameters...
+
+Most important transitions:
+* Top edge that represents mini-horizon
+* Flat/sloped -> Steep
+* Material transition
+
+Catmull-Rom Splines!! (guaranteed to pass through all control points)
+
+You'd be able to tell whether the surface was occluded simply by seeing if it
+ever slopes down after transformation
+
+Also, in general, and for interpolation code examples:  http://local.wasp.uwa.edu.au/~pbourke/miscellaneous/interpolation/
+And, for 3d- http://home.scarlet.be/piet.verplancken3/bezier/node16.html
+And, possibly, for triangles: http://en.wikipedia.org/wiki/B%C3%A9zier_triangle
+
+Shader:
+http://www.actionscript.org/resources/articles/876/1/Introduction-to-Pixel-Bender-and-Shader-for-Flash-Player-10/Page1.html
+http://ncannasse.fr/projects/pbj
+
+
+- No overhangs?
+- 
+

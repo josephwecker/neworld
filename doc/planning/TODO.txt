@@ -1,3 +1,16 @@
+[ ] - Look into ray-tracing basics for ideas in what can be changed at a
+fundamental level for super-textures
+
+[ ] - Figure out a more simplified but flexible "tile" rendering system
+
+[ ] - Get graphics pipeline (adjusted as necessary) into the wiki
+
+[ ] - Render humanoid shadow from flash shapes rather than the svg-based bitmap
+
+
+
+---------
+
 
 Scrolling
 http://github.com/Glidias/BitmapScroller  (uses alchemy mem)
