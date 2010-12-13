@@ -1,0 +1,21 @@
+
+================= Intrinsic state
+
+instincts - ability to remember ancestral rules?
+empathy - ability to try and figure out how others are feeling and will act
+speed
+endurance
+healing-rate
+memory
+goal-stack
+
+================= Volatile state
+
+location
+detectable surroundings
+internal world map / rules
+active stimulus
+energy
+health (unless a function of energy?)
+
+
