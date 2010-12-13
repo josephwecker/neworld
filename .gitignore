@@ -1,11 +1,10 @@
 .DS_Store
 .*.swp
-build/
 *.pyc
 .deps
-swfs/
+client/swfs/
 .gitstats
+client/.tmp
+client/src/assets
+doc/system/*
 Assets.hx
-.tmp
-asset_lib.swf
-src/assets

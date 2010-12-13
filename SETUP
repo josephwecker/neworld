@@ -1,0 +1,37 @@
+
+# As of 11/26/2010
+
+# requires very latest haxe, neko, and haxelib
+http://haxe.org/doc/build/haxe_ubuntu_build
+http://haxe.org/doc/build/neko_linux
+# Feel free to remove apache after installing neko
+http://haxe.org/doc/haxelib/building_haxelib
+
+# Haxe libraries
+haxelib install format
+haxelib install polygonal
+haxelib install sandy
+
+# Also requires chxdoc for documentation
+svn checkout http://caffeine-hx.googlecode.com/svn/trunk/ caffeine
+cd caffeine/projects/chxdoc
+make
+nekotools boot utils/temploc.n
+mv chxdoc ~/bin/         # Or symlink it, or to a different directory
+mv utils/temploc ~/bin/  # Ditto
+
+###### For wiki documentation
+#
+# git clone git@github.com:josephwecker/neworld.wiki.git
+# sudo gem install gollum
+#
+#### AsciiDoc:
+### Linux:  (probably)
+#
+# sudo apt-get install asciidoc
+#
+### Mac OSX:
+#
+# sudo brew install asciidoc
+#
+##### Make sure and have a look at http://www.methods.co.nz/asciidoc/asciidoc.css-embedded.html for syntax and https://github.com/github/gollum for more info on links and gollum in general
