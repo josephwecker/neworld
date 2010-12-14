@@ -19,13 +19,13 @@ watch_it(Orcs) ->
     quit ->
       io:format("Quitting...", []),
       shucks;
-    {Me, Msg} ->
-      [Orc|_] = Me,
+    {Orc, Msg} ->
+      Id = element(2, Orc),
       lists:foreach(
         fun(Neighbor) ->
             case Neighbor =:= Orc of
               true -> do_nothing;
-              false -> Neighbor ! {Me, Msg}
+              false -> Neighbor ! {Id, Msg}
             end
         end, Orcs),
       watch_it(Orcs)

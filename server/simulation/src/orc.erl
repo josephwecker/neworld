@@ -1,41 +1,48 @@
 -module(orc).
 -export([birth/2]).
 
+-record(orc, {
+    id,
+    who,
+    x,
+    y,
+    hit_points = 10,
+    strength = 10,
+    food = 3
+  }).
 
 birth(Name, World) ->
   {A1, A2, A3} = now(),
   random:seed(A1, A2, A3),
-  X = random:uniform(50),
-  Y = random:uniform(50),
-  State = [{hit_points, 10}, {strength, 10}, {food, 3}],
-  Me = [self(), Name, X, Y, State],
-  World ! {Me, {birth, "It's a boy!"}},
-  live(World, Me).
+  X = random:uniform(30),
+  Y = random:uniform(30),
+  New_Orc = #orc{id=self(), who=Name, x=X, y=Y},
+  io:format("~s~n",[New_Orc#orc.who]),
+  World ! {New_Orc, {birth, "It's a boy!"}},
+  live(World, New_Orc).
 
-live(World, Me = [Self, Name, X, Y, State]) ->
+live(World, Self) ->
   receive
 
-    {Him, {birth, _}} ->
-      [Target, HisName, HisX, HisY, HisState] = Him, 
-      DistX = HisX - X,
-      DistY = HisY - Y,
+    {Other, {birth, _}} ->
+      DistX = Other#orc.x - Self#orc.x,
+      DistY = Other#orc.y - Self#orc.y,
       Dist = math:sqrt((DistX * DistX) + (DistY * DistY)),
       case Dist < 5 of
         true ->
           react_time(random:uniform(5000)),
-          Target ! {Me, {threaten, "You're dead!!"}},
-          say(Name, HisName, "You're dead!!");
+          Other#orc.id ! {Self, {threaten, "You're dead!!"}},
+          say(Self#orc.who, Other#orc.who, "You're dead!!");
         false -> cant_see
       end;
 
-    {Him, {threaten, Msg}} ->
-      [Target, HisName, HisX, HisY, HisState] = Him, 
+    {Other, {threaten, Msg}} ->
       react_time(random:uniform(5000)),
-      Target ! {Me, {threaten_back, "No you're dead!!~n"}},
-      say(Name, HisName, "No You're dead!!!")
+      Other#orc.id ! {Self, {threaten_back, "No you're dead!!~n"}},
+      say(Self#orc.who, Other#orc.who, "No You're dead!!!")
 
   end,
-  live(World, Me).
+  live(World, Self).
 
 say(From, To, Msg) ->
   io:format("~s -> ~s: ~s~n",[From, To, Msg]).
