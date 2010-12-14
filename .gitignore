@@ -2,6 +2,7 @@
 .*.swp
 *.pyc
 .deps
+erl_crash.dump
 client/swfs/
 server/simulation/ebin/
 .gitstats
