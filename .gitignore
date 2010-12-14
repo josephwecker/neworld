@@ -3,6 +3,7 @@
 *.pyc
 .deps
 client/swfs/
+server/simulation/ebin/
 .gitstats
 client/.tmp
 client/src/assets
