@@ -31,7 +31,7 @@ watch_it(Orcs, Updater) ->
       shucks;
     {Orc, polo} ->
       Updater ! {Orc, polo},
-      %io:format("~s: ~p,~p~n",[element(3, Orc), element(4, Orc), element(5, Orc)]),
+      io:format("(~p)~s: ~p,~p~n",[Orc#orc.hit_points,Orc#orc.who,Orc#orc.x,Orc#orc.y]),
       Id = element(2, Orc),
       lists:foreach(
         fun(Neighbor) ->
