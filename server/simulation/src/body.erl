@@ -9,7 +9,6 @@ terminate/2, code_change/3]).
 birth(Name, World) -> gen_server:start_link(?MODULE, [Name, World], []).
 
 init([Name, World]) ->
-  io:format("test_2"),
   {A1, A2, A3} = now(),
   random:seed(A1, A2, A3),
   %react_time(random:uniform(4000)),
@@ -17,9 +16,13 @@ init([Name, World]) ->
   Y = random:uniform(30),
   New_Orc = #orc{id=self(), who=Name, x=X, y=Y},
   Self = self(),
-  Mind = spawn(fun() -> mind:awaken() end),
-  io:format("test_x"),
+  Mind = mind:awaken(),
   {ok, {New_Orc, Mind}}.
+
+handle_call(marco, _From, {Self, Mind}) ->
+  io:format("test_2~n"),
+  Reply = {Self, polo},
+  {reply, Reply, {Self, Mind}};
 
 handle_call({update, NewState}, _From, {_,Mind}) ->
   {noreply, {NewState, Mind}};

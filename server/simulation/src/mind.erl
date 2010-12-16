@@ -14,7 +14,6 @@ awaken() -> gen_server:start_link(?MODULE, [], []).
 
 % Call handlers:
 init([]) ->
-  io:format("test_3"),
   {ok, good}.
 
 handle_call({decide, Self}, _From, State) ->
