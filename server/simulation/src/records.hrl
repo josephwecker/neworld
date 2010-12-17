@@ -6,7 +6,8 @@
     living = true,
     hit_points = 10,
     strength = 10,
-    food = 3
+    food = 3,
+    mind
   }).
 
 -record(target, {
@@ -19,5 +20,6 @@
   }).
 
 -record(sinn, {
-    target = none
+    body,
+    memory = []
   }).
