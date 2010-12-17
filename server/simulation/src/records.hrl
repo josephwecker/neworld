@@ -4,7 +4,6 @@
     x,
     y,
     living = true,
-    target = none,
     hit_points = 10,
     strength = 10,
     food = 3
@@ -15,5 +14,10 @@
     who,
     x,
     y,
+    distance,
     living = true
+  }).
+
+-record(sinn, {
+    target = none
   }).

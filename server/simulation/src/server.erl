@@ -8,35 +8,33 @@ terminate/2, code_change/3]).
 
 start() ->
   gen_server:start_link({local, ?MODULE}, ?MODULE, [], []),
-  gen_server:call(?MODULE, ping).
-%run()   -> gen_server:call(?MODULE, ping).
+  timer:apply_interval(250, gen_server, cast, [server, ping]).
 
 init([]) ->
-  Names = ["Helga", "Toth", "Rorg", "Morteg", "Bgh", "Uuuung", "Elel", "Dorkr",
-  "Grishnak", "Entlar", "Renry", "Gruk", "Les","Artus","Gerni"],
-  Self = self(),
-  Orcs = lists:map(fun(Name) -> body:birth(Name, Self) end, Names),
-  {ok, Orcs}.
+  Names = ["Helga", "Toth", "Rorg", "Morteg", "Bgh", "Uuuung", "Elel", "Dorkr"],
+  Orcs = lists:map(fun(Name) -> {ok, Pid} = body:birth(Name), Pid end, Names),
+  {ok, {[], Orcs}}.
 
-handle_call(ping, _From, Orcs) ->
-  lists:foreach(fun({ok, Orc}) ->
-        Orc ! marco
-        %gen_server:call(Orc, marco)
+  %"Grishnak", "Entlar", "Renry", "Gruk", "Lesli","Artus","Gerni"],
+handle_call({Self, marco}, _From, {Posits, Orcs}) ->
+  Targets = [ {target, A, B, X, Y, distance(Self#orc.x,Self#orc.y,X,Y), C} ||
+      {_,A,B,X,Y,C,_,_,_} <- Posits],
+  {reply, Targets, {Posits, Orcs}}.
+
+handle_cast(ping, {_, Orcs}) ->
+  io:format("..peep..~n"),
+  NewPosits = lists:map(fun(Orc) ->
+        Posit = gen_server:call(Orc, marco),
+        Posit
     end, Orcs),
-  {reply, ok, Orcs};
-  
-handle_call({Orc, polo}, _From, Orcs) ->
-  io:format("~ntest_0~n"),
-  io:format("(~p)~s: ~p,~p~n",[Orc#orc.hit_points,Orc#orc.who,Orc#orc.x,Orc#orc.y]),
-  lists:foreach(fun(Neighbor) ->
-    case Neighbor =:= Orc#orc.id of
-      true -> do_nothing;
-      false -> Neighbor ! {Orc, polo}
-    end
-  end, Orcs),
-  {noreply, Orcs}.
-
+  {noreply, {NewPosits, Orcs}};
+ 
 handle_cast(_Msg, State) -> {noreply, State}.
 handle_info(_Info, State) -> {noreply, State}.
 terminate(_Reason, _State) -> ok.
-code_change(_OldVsn, State, Extra) -> {ok, State}.
+code_change(_OldVsn, State, _Extra) -> {ok, State}.
+
+distance(X,Y,Tx,Ty) ->
+  DistX = Tx - X,
+  DistY = Ty - Y,
+  math:sqrt((DistX * DistX) + (DistY * DistY)).
