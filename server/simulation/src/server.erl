@@ -11,11 +11,11 @@ start() ->
   timer:apply_interval(250, gen_server, cast, [server, ping]).
 
 init([]) ->
-  Names = ["Helga", "Toth", "Rorg", "Morteg", "Bgh", "Uuuung", "Elel", "Dorkr"],
+  Names = ["Helga"],% "Toth", "Rorg", "Morteg", "Bgh", "Uuuung", "Elel", "Dorkr"],
+  %"Grishnak", "Entlar", "Renry", "Gruk", "Lesli","Artus","Gerni"],
   Orcs = lists:map(fun(Name) -> {ok, Pid} = body:birth(Name), Pid end, Names),
   {ok, {[], Orcs}}.
 
-  %"Grishnak", "Entlar", "Renry", "Gruk", "Lesli","Artus","Gerni"],
 handle_call({Self, marco}, _From, {Posits, Orcs}) ->
   Targets = [ {target, A, B, X, Y, distance(Self#orc.x,Self#orc.y,X,Y), C} ||
       {_,A,B,X,Y,C,_,_,_} <- Posits],

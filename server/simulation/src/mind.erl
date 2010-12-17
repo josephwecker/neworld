@@ -9,36 +9,39 @@ terminate/2, code_change/3]).
 awaken(Body) ->
   {ok, Mind} = gen_server:start_link(?MODULE, [Body], []),
   %gen_server:cast(Mind, think).
-  timer:apply_interval(2000, gen_server, cast, [Mind, think]).
+  timer:apply_interval(1000, gen_server, cast, [Mind, think]).
 
 init([Body]) ->
   Mind = #sinn{},
   {ok, {Mind, Body}}.
 
-handle_call({decide, Self}, _From, State) -> Reply = yes, {reply, Reply, State}.
+% TODO:
+handle_call({decide, _Self}, _From, State) -> Reply = yes, {reply, Reply, State}.
   
 
 handle_cast(think, {Mind, Body}) ->
-  {Self, Others} = gen_server:call(Body, tell_me_everything),
+  {_Self, _Others} = gen_server:call(Body, tell_me_everything),
   io:format("Received Targets~n"),
-  Target = Mind#sinn.target,
-  case Target =:= none of
-    true ->
-      Reply = {move, random};
-    false ->
-      case Target#target.living of
-        true ->
-          case body:distance(Self#orc.x, Self#orc.y, Target#target.x, Target#target.y) < 2 of
-            true ->
-              Reply = {attack};
-            false ->
-              Reply = {move, target}
-          end;
-        false ->
-          Reply = {drop_target}
-      end
-  end,
-  gen_server:cast(Body, Reply),
+% With above info, make a decision:decision
+
+%  Target = Mind#sinn.target,
+%  case Target =:= none of
+%    true ->
+%      Reply = {move, random};
+%    false ->
+%      case Target#target.living of
+%        true ->
+%          case body:distance(Self#orc.x, Self#orc.y, Target#target.x, Target#target.y) < 2 of
+%            true ->
+%              Reply = {attack};
+%            false ->
+%              Reply = {move, target}
+%          end;
+%        false ->
+%          Reply = {drop_target}
+%      end
+%  end,
+%  gen_server:cast(Body, Reply),
   {noreply, {Mind, Body}};
 
 handle_cast(_Msg, State) -> {noreply, State}.
